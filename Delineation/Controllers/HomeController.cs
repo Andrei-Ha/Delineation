@@ -59,6 +59,12 @@ namespace Delineation.Controllers
             row.Cells.Add(cell_left);
             row.Cells.Add(cell_right);
             section1.Blocks.Add(table);
+            //---
+            string str_act = "РУП «Брестэнерго» именуемое в дальнейшем «Энергоснабжающая организация», в лице начальника Пинского городского РЭС филиала «Пинские электрические сети» РУП «Брестэнерго» Булавина Виталия Федоровича действующего на основании доверенности №3501 от 17.07.2019г. с одной стороны, и Физическое (Юридическое) лицо именуемое в дальнейшем «Потребитель», в лице Михолап Марии Николаевны  действующей(его) на основании (доверенности № ) с другой стороны составили настоящий АКТ о нижеследующем.";
+            section1.Blocks.Add(new Paragraph(doc, str_act) { ParagraphFormat = { Alignment = HorizontalAlignment.Left } });
+            //---
+            
+            //---
             string str_par = "\tРазрешенная к использованию мощность 15,0 кВт.\n" +
                 "\tЭлектроустановки потребителя относятся к 3 категории " +
                 "по надежности электроснабжения.\n" +
@@ -67,6 +73,7 @@ namespace Delineation.Controllers
                 "\tВ соответствии с главой 3 Правил электроснабжения границы раздела устанавливаются следующими:\n";
             Paragraph paragraph2 = new Paragraph(doc, str_par) { ParagraphFormat = { Alignment = HorizontalAlignment.Left } };
             section1.Blocks.Add(paragraph2);
+            //--
             //---save---//
             doc.Save(path_docx);
             doc.Save(path_html);
