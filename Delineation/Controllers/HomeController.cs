@@ -25,6 +25,24 @@ namespace Delineation.Controllers
 
         public IActionResult Index()
         {
+            return View();
+        }
+        public IActionResult Create()
+        {
+            CreateAct();
+            return View();
+        }
+        public IActionResult Open()
+        {
+            return View();
+        }
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+        
+        public void CreateAct()
+        {
             ComponentInfo.SetLicense("FREE-LIMITED-KEY");
             string contentRootPath = _webHostEnvironment.ContentRootPath;
             string webRootPath = _webHostEnvironment.WebRootPath;
@@ -45,7 +63,7 @@ namespace Delineation.Controllers
             doc.Sections.Add(section1);
             Paragraph paragraph = new Paragraph(doc) { ParagraphFormat = { Alignment = HorizontalAlignment.Center } };
             section1.Blocks.Add(paragraph);
-            Run run1 = new Run(doc,"АКТ");
+            Run run1 = new Run(doc, "АКТ");
             Run run2 = new Run(doc, "разграничения балансовой принадлежности электросетей") { CharacterFormat = { Style = ActFont } };
             Run run3 = new Run(doc, "и эксплуатационной ответственности сторон") { CharacterFormat = { Style = ActFont } };
             paragraph.Inlines.Add(run1);
@@ -65,7 +83,7 @@ namespace Delineation.Controllers
             section1.Blocks.Add(table);
             //---
             string str_act = "\nРУП «Брестэнерго» именуемое в дальнейшем «Энергоснабжающая организация», в лице начальника Пинского городского РЭС филиала «Пинские электрические сети» РУП «Брестэнерго» Булавина Виталия Федоровича действующего на основании доверенности №3501 от 17.07.2019г. с одной стороны, и Физическое (Юридическое) лицо именуемое в дальнейшем «Потребитель», в лице Михолап Марии Николаевны  действующей(его) на основании (доверенности № ) с другой стороны составили настоящий АКТ о нижеследующем.\t";
-            section1.Blocks.Add(new Paragraph(doc,str_act) { ParagraphFormat = { Alignment = HorizontalAlignment.Justify } });
+            section1.Blocks.Add(new Paragraph(doc, str_act) { ParagraphFormat = { Alignment = HorizontalAlignment.Justify } });
             //---
             string str_ty = "На день составления Акта технические условия № 31/326 от 26.01.2019 \n " +
                 "на внешнее электроснабжение объекта";
@@ -114,16 +132,112 @@ namespace Delineation.Controllers
                 new SpecialCharacter(doc, SpecialCharacterType.LineBreak)
                 )
             { ParagraphFormat = { Alignment = HorizontalAlignment.Justify } });
+            ///////////////////////////////////---sectiion2---
+            Section section2 = new Section(doc);
+            doc.Sections.Add(section2);
+            ///---
+            string path_pict = (_webHostEnvironment.WebRootPath + "\\output\\pict.jpg");
+            Picture pict = new Picture(doc, path_pict, 160, 106, LengthUnit.Millimeter);
+            Paragraph paragraph21 = new Paragraph(doc) { ParagraphFormat = { Alignment = HorizontalAlignment.Center } };
+            section2.Blocks.Add(paragraph21);
+            paragraph21.Inlines.Add(new Run(doc, "Схема питания электроустановки:"));
+            paragraph21.Inlines.Add(new SpecialCharacter(doc, SpecialCharacterType.LineBreak));
+            paragraph21.Inlines.Add(pict);
+            //---
+            section2.Blocks.Add(new Paragraph(doc,
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new Run(doc, "ПРИМЕЧАНИЕ"),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new Run(doc, "1.Границы по схеме обозначаются: балансовой принадлежности - красной линией; эксплуатационной ответственности - синей."),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new Run(doc, "2.При изменении срока действия Акта, присоединенных мощностей, схемы внешнего электроснабжения, категории надежности электроснабжения, границ балансовой принадлежности и эксплуатационной ответственности Акт подлежит замене."),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new Run(doc, "3.Доверенность потребителя на подписание акта разграничения хранится в энергоснабжающей организации."),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new Run(doc, "4.На схеме питания электроустановки указываются места установки приборов учета, параметры силовых и измерительных трансформаторов и ЛЭП."),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new Run(doc, "5.Потребителю запрещается без согласования с диспетчером энергоснабжающей организации самовольно производить переключения и изменять схему внешнего электроснабжения."),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new Run(doc, "6.Потребителю запрещается без согласования с энергоснабжающей организацией подключать к своим электроустановкам сторонних потребителей."),
+                new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak)
+                )
+            { ParagraphFormat = { Alignment = HorizontalAlignment.Justify } }
+            );
+            //---
+            var table2 = new Table(doc) { TableFormat = { PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage) } };
+            table2.TableFormat.Borders.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Black, 1);
+            var row21 = new TableRow(doc);
+            table2.Rows.Add(row21);
+            var cell2_left = new TableCell(doc, new Paragraph(doc,
+                new Run(doc, "Представитель энергоснабжающей организации"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "Представитель Потребителя"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "Представитель владельца"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "транзитных электрических сетей"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "Срок действия акта"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "Главный инженер"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "Зам.начальника РЭС по сбыту энерги"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "Бухгалтер РЭС")
+                ));
+            var cell2_center = new TableCell(doc, new Paragraph(doc,
+                new Run(doc, "_____"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "_____"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "_____"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "_____"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "_____"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "_____"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "_____")
+                ));
+            var cell2_right = new TableCell(doc, new Paragraph(doc,
+                new Run(doc, "В.Ф. Булавин"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "-//-"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "-//-"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "-//-"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "А.И. Литвинчук"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "А.М. Германович"),
+                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                new Run(doc, "Т.В. Велесницкая")
+                ));
+            row21.Cells.Add(cell2_left);
+            row21.Cells.Add(cell2_center);
+            row21.Cells.Add(cell2_right);
+            section2.Blocks.Add(table2);
             //---save---//
             doc.Save(path_docx);
             doc.Save(path_html);
             doc.Save(path_pdf);
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
