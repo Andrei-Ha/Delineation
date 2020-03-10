@@ -9,15 +9,15 @@ function includeHTML() {
   z = document.getElementsByTagName("*");
   for (i = 0; i < z.length; i++) {
     elmnt = z[i];
-    /*search for elements with a certain atrribute:*/
-    file = elmnt.getAttribute("w3-include-html");
+      /*search for elements with a certain atrribute:*/
+      file = elmnt.getAttribute("w3-include-html");
     if (file) {
       /*make an HTTP request using the attribute value as the file name:*/
       xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
-        if (this.readyState == 4) {
-          if (this.status == 200) {elmnt.innerHTML = this.responseText;}
-          if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
+          if (this.readyState == 4) {
+              if (this.status == 200) { elmnt.innerHTML = this.responseText.replace("act_files","../output/act_files"); }
+          if (this.status == 404) {elmnt.innerHTML = "Page not found. -" + file;}
           /*remove the attribute, and call this function once more:*/
           elmnt.removeAttribute("w3-include-html");
           includeHTML();
@@ -32,7 +32,7 @@ function includeHTML() {
 };
     </script>
 <h1>Open</h1>
-<div w3-include-html="../../wwwroot/Output/act.html"></div>
+<div w3-include-html="/Output/act.html"></div>
 <script>
     includeHTML();
 </script>
