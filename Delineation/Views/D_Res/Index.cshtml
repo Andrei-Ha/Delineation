@@ -18,6 +18,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
+            <th>
+                Представители РЭС:
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -29,6 +32,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                начальник:<i>@(item.Nach?.Surname + " " + item.Nach?.Name + " " + item.Nach?.Patronymic)</i><br />
+                зам.нач. по сбыту:<i>@(item.ZamNach?.Surname + " " + item.ZamNach?.Name + " " + item.ZamNach?.Patronymic)</i><br />
+                гл. инженер:<i>@(item.GlInzh?.Surname + " " + item.GlInzh?.Name + " " + item.GlInzh?.Patronymic)</i><br />
+                бухгалтер:<i>@(item.Buh?.Surname + " " + item.Buh?.Name + " " + item.Buh?.Patronymic)</i><br />
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

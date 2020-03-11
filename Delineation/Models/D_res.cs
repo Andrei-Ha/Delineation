@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Delineation.Models
 {
@@ -17,12 +18,15 @@ namespace Delineation.Models
         public D_Person GlInzh { get; set; }
         public D_Person Buh { get; set; }
     }
+
     public class D_Person
     {
         public int Id { get; set; }
         public string Surname { get; set; }
         public string Name { get; set; }
         public string Patronymic { get; set; }
+        [NotMapped]
+        public string FIO { get; set; }
     }
     public class DelineationContext: DbContext 
     {

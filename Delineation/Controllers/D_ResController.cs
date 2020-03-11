@@ -21,7 +21,9 @@ namespace Delineation.Controllers
         // GET: D_Res
         public async Task<IActionResult> Index()
         {
-            return View(await _context.D_Reses.ToListAsync());
+            //_context.D_Persons.Load();
+            //return View(await _context.D_Reses.ToListAsync());
+            return View(await _context.D_Reses.Include(o => o.Nach).Include(o => o.ZamNach).Include(o => o.GlInzh).Include(o => o.Buh).ToListAsync());
         }
 
         // GET: D_Res/Details/5
@@ -32,7 +34,7 @@ namespace Delineation.Controllers
                 return NotFound();
             }
 
-            var d_Res = await _context.D_Reses
+            var d_Res = await _context.D_Reses.Include(o => o.Nach).Include(o => o.ZamNach).Include(o => o.GlInzh).Include(o => o.Buh)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (d_Res == null)
             {
