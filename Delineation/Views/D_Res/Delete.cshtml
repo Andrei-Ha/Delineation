@@ -11,17 +11,26 @@
     <h4>D_Res</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Code)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Code)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            Представители
+        </dt>
+        <dd class="col-sm-10">
+            начальник:<i>@(Model.Nach?.Surname + " " + Model.Nach?.Name + " " + Model.Nach?.Patronymic)</i><br />
+            зам.нач. по сбыту:<i>@(Model.ZamNach?.Surname + " " + Model.ZamNach?.Name + " " + Model.ZamNach?.Patronymic)</i><br />
+            гл. инженер:<i>@(Model.GlInzh?.Surname + " " + Model.GlInzh?.Name + " " + Model.GlInzh?.Patronymic)</i><br />
+            бухгалтер:<i>@(Model.Buh?.Surname + " " + Model.Buh?.Name + " " + Model.Buh?.Patronymic)</i><br />
         </dd>
     </dl>
     

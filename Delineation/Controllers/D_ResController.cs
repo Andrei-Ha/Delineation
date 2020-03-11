@@ -21,9 +21,8 @@ namespace Delineation.Controllers
         // GET: D_Res
         public async Task<IActionResult> Index()
         {
-            //_context.D_Persons.Load();
-            //return View(await _context.D_Reses.ToListAsync());
-            return View(await _context.D_Reses.Include(o => o.Nach).Include(o => o.ZamNach).Include(o => o.GlInzh).Include(o => o.Buh).ToListAsync());
+            var delineationContext = _context.D_Reses.Include(d => d.Buh).Include(d => d.GlInzh).Include(d => d.Nach).Include(d => d.ZamNach);
+            return View(await delineationContext.ToListAsync());
         }
 
         // GET: D_Res/Details/5
@@ -34,7 +33,11 @@ namespace Delineation.Controllers
                 return NotFound();
             }
 
-            var d_Res = await _context.D_Reses.Include(o => o.Nach).Include(o => o.ZamNach).Include(o => o.GlInzh).Include(o => o.Buh)
+            var d_Res = await _context.D_Reses
+                .Include(d => d.Buh)
+                .Include(d => d.GlInzh)
+                .Include(d => d.Nach)
+                .Include(d => d.ZamNach)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (d_Res == null)
             {
@@ -47,6 +50,12 @@ namespace Delineation.Controllers
         // GET: D_Res/Create
         public IActionResult Create()
         {
+            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic })
+                .Prepend(new { Id =0, FIO = "---"});
+            ViewData["BuhId"] = new SelectList(person_list, "Id", "FIO");
+            ViewData["GlInzhId"] = new SelectList(person_list, "Id", "FIO");
+            ViewData["NachId"] = new SelectList(person_list, "Id", "FIO");
+            ViewData["ZamNachId"] = new SelectList(person_list, "Id", "FIO");
             return View();
         }
 
@@ -55,7 +64,7 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Code,Name")] D_Res d_Res)
+        public async Task<IActionResult> Create([Bind("ID,Code,Name,NachId,ZamNachId,GlInzhId,BuhId")] D_Res d_Res)
         {
             if (ModelState.IsValid)
             {
@@ -63,6 +72,12 @@ namespace Delineation.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic })
+                .Prepend(new { Id = 0, FIO = "---" });
+            ViewData["BuhId"] = new SelectList(person_list, "Id", "FIO", d_Res.BuhId);
+            ViewData["GlInzhId"] = new SelectList(person_list, "Id", "FIO", d_Res.GlInzhId);
+            ViewData["NachId"] = new SelectList(person_list, "Id", "FIO", d_Res.NachId);
+            ViewData["ZamNachId"] = new SelectList(person_list, "Id", "FIO", d_Res.ZamNachId);
             return View(d_Res);
         }
 
@@ -79,6 +94,12 @@ namespace Delineation.Controllers
             {
                 return NotFound();
             }
+            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic })
+                .Prepend(new { Id = 0, FIO = "---" });
+            ViewData["BuhId"] = new SelectList(person_list, "Id", "FIO", d_Res.BuhId);
+            ViewData["GlInzhId"] = new SelectList(person_list, "Id", "FIO", d_Res.GlInzhId);
+            ViewData["NachId"] = new SelectList(person_list, "Id", "FIO", d_Res.NachId);
+            ViewData["ZamNachId"] = new SelectList(person_list, "Id", "FIO", d_Res.ZamNachId);
             return View(d_Res);
         }
 
@@ -87,7 +108,7 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Code,Name")] D_Res d_Res)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Code,Name,NachId,ZamNachId,GlInzhId,BuhId")] D_Res d_Res)
         {
             if (id != d_Res.ID)
             {
@@ -114,6 +135,12 @@ namespace Delineation.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic })
+                .Prepend(new { Id = 0, FIO = "---" });
+            ViewData["BuhId"] = new SelectList(person_list, "Id", "FIO", d_Res.BuhId);
+            ViewData["GlInzhId"] = new SelectList(person_list, "Id", "FIO", d_Res.GlInzhId);
+            ViewData["NachId"] = new SelectList(person_list, "Id", "FIO", d_Res.NachId);
+            ViewData["ZamNachId"] = new SelectList(person_list, "Id", "FIO", d_Res.ZamNachId);
             return View(d_Res);
         }
 
@@ -126,6 +153,10 @@ namespace Delineation.Controllers
             }
 
             var d_Res = await _context.D_Reses
+                .Include(d => d.Buh)
+                .Include(d => d.GlInzh)
+                .Include(d => d.Nach)
+                .Include(d => d.ZamNach)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (d_Res == null)
             {

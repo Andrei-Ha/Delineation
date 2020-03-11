@@ -14,11 +14,14 @@ namespace Delineation.Models
         public int Code { get; set; }
         public string Name { get; set; }
         public D_Person Nach { get; set; }
+        public int? NachId { get; set; }
         public D_Person ZamNach { get; set; }
+        public int? ZamNachId { get; set; }
         public D_Person GlInzh { get; set; }
+        public int? GlInzhId { get; set; }
         public D_Person Buh { get; set; }
+        public int? BuhId { get; set; }
     }
-
     public class D_Person
     {
         public int Id { get; set; }
