@@ -7,6 +7,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200311115148_After_add_nachId.cs" />
     <Compile Remove="Migrations\20200311115148_After_add_nachId.Designer.cs" />
+    <Compile Remove="Migrations\20200312135330_D-Tc.cs" />
+    <Compile Remove="Migrations\20200312135330_D-Tc.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

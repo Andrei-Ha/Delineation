@@ -10,7 +10,7 @@ namespace Delineation.Models
 {
     public class D_Res
     {
-        public int ID { get; }
+        public int ID { get; set; }
         [Display(Name="Код")]
         public int Code { get; set; }
         [Display(Name ="Название")]
@@ -26,7 +26,7 @@ namespace Delineation.Models
     }
     public class D_Person
     {
-        public int Id { get; }
+        public int Id { get; set; }
         [Display(Name ="Фамилия")]        
         public string Surname { get; set; }
         [Display(Name="Имя")]
@@ -38,7 +38,7 @@ namespace Delineation.Models
     }
     public class D_Tc
     {
-        public int Id { get; }
+        public int Id { get; set; }
         [Display(Name = "№ ТУ")]
         [Column(TypeName = "varchar(20)")]
         public string Num { get; set; }
@@ -64,6 +64,7 @@ namespace Delineation.Models
     {
         public DbSet<D_Res> D_Reses { get; set; }
         public DbSet<D_Person> D_Persons { get; set; }
+        public DbSet<D_Tc> D_Tces { get; set; }
         public DelineationContext( DbContextOptions<DelineationContext> options): base(options)
         {
             //Database.EnsureCreated();
