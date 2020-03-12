@@ -1,14 +1,14 @@
 ﻿@model Delineation.Models.D_Res
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Удаление";
 }
 
-<h1>Delete</h1>
+<h1>Удаление</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Вы уверены, что хотите удалить эту запись?</h3>
 <div>
-    <h4>D_Res</h4>
+    <h4>Подразделение</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -27,16 +27,46 @@
             Представители
         </dt>
         <dd class="col-sm-10">
-            начальник:<i>@(Model.Nach?.Surname + " " + Model.Nach?.Name + " " + Model.Nach?.Patronymic)</i><br />
-            зам.нач. по сбыту:<i>@(Model.ZamNach?.Surname + " " + Model.ZamNach?.Name + " " + Model.ZamNach?.Patronymic)</i><br />
-            гл. инженер:<i>@(Model.GlInzh?.Surname + " " + Model.GlInzh?.Name + " " + Model.GlInzh?.Patronymic)</i><br />
-            бухгалтер:<i>@(Model.Buh?.Surname + " " + Model.Buh?.Name + " " + Model.Buh?.Patronymic)</i><br />
+            <table>
+                <tr>
+                    <td>
+                        начальник:
+                    </td>
+                    <td>
+                        <i>@(Model.Nach?.Surname + " " + Model.Nach?.Name + " " + Model.Nach?.Patronymic)</i>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        зам.нач. по сбыту:
+                    </td>
+                    <td>
+                        <i>@(Model.ZamNach?.Surname + " " + Model.ZamNach?.Name + " " + Model.ZamNach?.Patronymic)</i>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        гл. инженер:
+                    </td>
+                    <td>
+                        <i>@(Model.GlInzh?.Surname + " " + Model.GlInzh?.Name + " " + Model.GlInzh?.Patronymic)</i>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        бухгалтер:
+                    </td>
+                    <td>
+                        <i>@(Model.Buh?.Surname + " " + Model.Buh?.Name + " " + Model.Buh?.Patronymic)</i>
+                    </td>
+                </tr>
+            </table>
         </dd>
     </dl>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="ID" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Удалить" class="btn btn-danger" /> |
+        <a asp-action="Index">Назад к списку</a>
     </form>
 </div>
