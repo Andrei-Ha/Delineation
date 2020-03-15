@@ -42,20 +42,20 @@ namespace Delineation.Models
         [Display(Name = "№ ТУ")]
         [Column(TypeName = "varchar(20)")]
         public string Num { get; set; }
-        [Display(Name = "Дата выдачи")]
+        [Display(Name = "Дата выдачи"),DataType(DataType.Date)]
         public DateTime Date { get; set; }
-        [Display(Name = "ФИО заявителя")]
+        [Display(Name = "ФИО заявителя"), Column(TypeName = "varchar(50)")]
         public string FIO { get; set; }
         [Display(Name = "РЭС")]
         public D_Res Res { get; set; }
         public int? ResId { get; set; }
-        [Display(Name = "Адрес объекта строительства")]
+        [Display(Name = "Адрес объекта строительства"), Column(TypeName = "varchar(50)")]
         public string Address { get; set; }
-        [Display(Name = "Разрешенная мощность")]
-        public double Pow { get; set; }
+        [Display(Name = "Разрешенная мощность"),Column(TypeName ="varchar(7)"),StringLength(7,ErrorMessage ="допустимая длинна - 7 символов")]
+        public string Pow { get; set; }
         [Display(Name = "Категория")]
         public int Category { get; set; }
-        [Display(Name = "Точка подключения")]
+        [Display(Name = "Точка подключения"), Column(TypeName = "varchar(50)")]
         public string Point { get; set; }
         [Display(Name = "Инв. №")]
         public int InvNum { get; set; }

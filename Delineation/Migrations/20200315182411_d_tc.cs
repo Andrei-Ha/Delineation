@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Delineation.Migrations
 {
-    public partial class D_Tc : Migration
+    public partial class d_tc : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,12 +15,12 @@ namespace Delineation.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Num = table.Column<string>(type: "varchar(20)", nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
-                    FIO = table.Column<string>(nullable: true),
+                    FIO = table.Column<string>(type: "varchar(50)", nullable: true),
                     ResId = table.Column<int>(nullable: true),
-                    Address = table.Column<string>(nullable: true),
-                    Pow = table.Column<double>(nullable: false),
+                    Address = table.Column<string>(type: "varchar(50)", nullable: true),
+                    Pow = table.Column<string>(type: "varchar(7)", nullable: true),
                     Category = table.Column<int>(nullable: false),
-                    Point = table.Column<string>(nullable: true),
+                    Point = table.Column<string>(type: "varchar(50)", nullable: true),
                     InvNum = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

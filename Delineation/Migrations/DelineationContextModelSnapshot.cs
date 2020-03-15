@@ -86,7 +86,7 @@ namespace Delineation.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<int>("Category")
                         .HasColumnType("int");
@@ -95,7 +95,7 @@ namespace Delineation.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FIO")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<int>("InvNum")
                         .HasColumnType("int");
@@ -104,10 +104,10 @@ namespace Delineation.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.Property<string>("Point")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(50)");
 
-                    b.Property<double>("Pow")
-                        .HasColumnType("float");
+                    b.Property<string>("Pow")
+                        .HasColumnType("varchar(7)");
 
                     b.Property<int?>("ResId")
                         .HasColumnType("int");
