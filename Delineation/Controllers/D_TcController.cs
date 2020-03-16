@@ -6,16 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Delineation.Models;
+using GemBox.Spreadsheet;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Delineation.Controllers
 {
     public class D_TcController : Controller
     {
         private readonly DelineationContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public D_TcController(DelineationContext context)
+        public D_TcController(DelineationContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: D_Tc
@@ -47,7 +51,7 @@ namespace Delineation.Controllers
         // GET: D_Tc/Create
         public IActionResult Create()
         {
-            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "ID");
+            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "Name");
             return View();
         }
 
@@ -56,7 +60,7 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Num,Date,FIO,ResId,Address,Pow,Category,Point,InvNum")] D_Tc d_Tc)
+        public async Task<IActionResult> Create([Bind("Id,Num,Date,ResId,Company,FIO,ObjName,Address,Pow,Category,Point,InvNum")] D_Tc d_Tc)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +68,7 @@ namespace Delineation.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "ID", d_Tc.ResId);
+            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "Name", d_Tc.ResId);
             return View(d_Tc);
         }
 
@@ -81,7 +85,7 @@ namespace Delineation.Controllers
             {
                 return NotFound();
             }
-            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "ID", d_Tc.ResId);
+            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "Name", d_Tc.ResId);
             return View(d_Tc);
         }
 
@@ -90,7 +94,7 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Num,Date,FIO,ResId,Address,Pow,Category,Point,InvNum")] D_Tc d_Tc)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Num,Date,ResId,Company,FIO,ObjName,Address,Pow,Category,Point,InvNum")] D_Tc d_Tc)
         {
             if (id != d_Tc.Id)
             {
@@ -117,7 +121,7 @@ namespace Delineation.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "ID", d_Tc.ResId);
+            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "Name", d_Tc.ResId);
             return View(d_Tc);
         }
 
@@ -154,6 +158,31 @@ namespace Delineation.Controllers
         private bool D_TcExists(int id)
         {
             return _context.D_Tces.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> FromXlsx()
+        {
+            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
+            string path_xlsx = _webHostEnvironment.WebRootPath + "\\Excel\\tc.xlsx";
+            var workbook = ExcelFile.Load(path_xlsx);
+            ExcelWorksheet worksheet = workbook.Worksheets[0];
+            D_Tc model = new D_Tc();
+            int i = 3;
+            model.Num = worksheet.Cells["B" + i].Value.ToString();
+            //model.Date = worksheet.Cells["C" + i].Value.ToString();
+            model.ResId = Convert.ToInt32(worksheet.Cells["D" + i].Value);
+            model.Company = worksheet.Cells["E" + i].Value.ToString();
+            model.FIO = worksheet.Cells["F" + i].Value.ToString();
+            model.ObjName = worksheet.Cells["G" + i].Value.ToString();
+            model.Address = worksheet.Cells["H" + i].Value.ToString();
+            model.Pow = worksheet.Cells["I" + i].Value.ToString();
+            model.Category = Convert.ToInt32(worksheet.Cells["J" + i].Value);
+            model.Point = worksheet.Cells["K" + i].Value.ToString();
+            model.InvNum = Convert.ToInt32(worksheet.Cells["L" + i].Value);
+            model.Pillar = Convert.ToInt32(worksheet.Cells["M" + i].Value);
+            _context.Add(model);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

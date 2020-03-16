@@ -11,6 +11,10 @@
     <Compile Remove="Migrations\20200312135330_D-Tc.Designer.cs" />
     <Compile Remove="Migrations\20200312140135_D_Tc.cs" />
     <Compile Remove="Migrations\20200312140135_D_Tc.Designer.cs" />
+    <Compile Remove="Migrations\20200315182411_d_tc.cs" />
+    <Compile Remove="Migrations\20200315182411_d_tc.Designer.cs" />
+    <Compile Remove="Migrations\20200316121320_d_tc.cs" />
+    <Compile Remove="Migrations\20200316121320_d_tc.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +23,7 @@
   
   <ItemGroup>
     <PackageReference Include="GemBox.Document" Version="31.0.0.1130" />
+    <PackageReference Include="GemBox.Spreadsheet" Version="45.0.0.1094" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.1" />
     <PackageReference Include="microsoft.entityframeworkcore.sqlserver" Version="3.1.2" />
     <PackageReference Include="microsoft.entityframeworkcore.tools" Version="3.1.2">

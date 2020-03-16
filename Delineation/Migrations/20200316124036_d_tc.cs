@@ -13,14 +13,16 @@ namespace Delineation.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Num = table.Column<string>(type: "varchar(20)", nullable: true),
+                    Num = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
-                    FIO = table.Column<string>(type: "varchar(50)", nullable: true),
                     ResId = table.Column<int>(nullable: true),
-                    Address = table.Column<string>(type: "varchar(50)", nullable: true),
-                    Pow = table.Column<string>(type: "varchar(7)", nullable: true),
+                    Company = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    FIO = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true),
+                    ObjName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Pow = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: true),
                     Category = table.Column<int>(nullable: false),
-                    Point = table.Column<string>(type: "varchar(50)", nullable: true),
+                    Point = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     InvNum = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

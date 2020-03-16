@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Delineation.Migrations
 {
     [DbContext(typeof(DelineationContext))]
-    [Migration("20200315182411_d_tc")]
+    [Migration("20200316124036_d_tc")]
     partial class d_tc
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -88,28 +88,41 @@ namespace Delineation.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address")
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
 
                     b.Property<int>("Category")
                         .HasColumnType("int");
+
+                    b.Property<string>("Company")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FIO")
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(70)")
+                        .HasMaxLength(70);
 
                     b.Property<int>("InvNum")
                         .HasColumnType("int");
 
                     b.Property<string>("Num")
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<string>("ObjName")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
 
                     b.Property<string>("Point")
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Pow")
-                        .HasColumnType("varchar(7)");
+                        .HasColumnType("nvarchar(7)")
+                        .HasMaxLength(7);
 
                     b.Property<int?>("ResId")
                         .HasColumnType("int");

@@ -39,26 +39,45 @@ namespace Delineation.Models
     public class D_Tc
     {
         public int Id { get; set; }
+
         [Display(Name = "№ ТУ")]
-        [Column(TypeName = "varchar(20)")]
+        [Column(TypeName = "nvarchar(20)"), StringLength(20)]
         public string Num { get; set; }
+
         [Display(Name = "Дата выдачи"),DataType(DataType.Date)]
         public DateTime Date { get; set; }
-        [Display(Name = "ФИО заявителя"), Column(TypeName = "varchar(50)")]
-        public string FIO { get; set; }
+
         [Display(Name = "РЭС")]
         public D_Res Res { get; set; }
+        [Display(Name = "РЭС")]
         public int? ResId { get; set; }
-        [Display(Name = "Адрес объекта строительства"), Column(TypeName = "varchar(50)")]
+
+        [Display(Name ="Наименование организации"), Column(TypeName = "nvarchar(150)"), StringLength(150)]
+        public string Company { get; set; }
+
+        [Display(Name = "ФИО заявителя"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
+        public string FIO { get; set; }
+
+        [Display(Name ="Наименование объекта"), Column(TypeName = "nvarchar(150)"), StringLength(150)]
+        public string ObjName { get; set; }
+
+        [Display(Name = "Адрес объекта строительства"), Column(TypeName = "nvarchar(200)"), StringLength(200)]
         public string Address { get; set; }
-        [Display(Name = "Разрешенная мощность"),Column(TypeName ="varchar(7)"),StringLength(7,ErrorMessage ="допустимая длинна - 7 символов")]
+
+        [Display(Name = "Разрешенная мощность"),Column(TypeName ="nvarchar(7)"),StringLength(7,ErrorMessage ="допустимая длинна - 7 символов")]
         public string Pow { get; set; }
+
         [Display(Name = "Категория")]
         public int Category { get; set; }
-        [Display(Name = "Точка подключения"), Column(TypeName = "varchar(50)")]
+
+        [Display(Name = "Точка подключения"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
         public string Point { get; set; }
+
         [Display(Name = "Инв. №")]
         public int InvNum { get; set; }
+
+        [Display(Name ="Опора")]
+        public int Pillar { get; set; }
     }
     public class DelineationContext: DbContext 
     {
@@ -87,7 +106,7 @@ namespace Delineation.Models
             // HasComputedColumnSql() можно установить в бд SQL-выражение: modelBuilder.Entity<User>().Property(u => u.Name).HasComputedColumnSql("[FirstName] + ' ' + [LastName]");
             // Обязательные свойства: [Required] -- modelBuilder.Entity<User>().Property(b => b.Name).IsRequired();
             // Ограничения по длине: [MaxLength(50)] -- modelBuilder.Entity<User>().Property(b => b.Name).HasMaxLength(50);
-            // Типы данных: [Column(TypeName = "varchar(200)")] -- modelBuilder.Entity<User>().Property(u=>u.Name).HasColumnType("varchar(200)");
+            // Типы данных: [Column(TypeName = "nvarchar(200)")] -- modelBuilder.Entity<User>().Property(u=>u.Name).HasColumnType("nvarchar(200)");
             /* Инициализация БД начальными данными:
                 modelBuilder.Entity<User>().HasData(
                 new User[] 
