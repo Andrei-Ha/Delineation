@@ -5,19 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200311115148_After_add_nachId.cs" />
-    <Compile Remove="Migrations\20200311115148_After_add_nachId.Designer.cs" />
-    <Compile Remove="Migrations\20200312135330_D-Tc.cs" />
-    <Compile Remove="Migrations\20200312135330_D-Tc.Designer.cs" />
-    <Compile Remove="Migrations\20200312140135_D_Tc.cs" />
-    <Compile Remove="Migrations\20200312140135_D_Tc.Designer.cs" />
-    <Compile Remove="Migrations\20200315182411_d_tc.cs" />
-    <Compile Remove="Migrations\20200315182411_d_tc.Designer.cs" />
-    <Compile Remove="Migrations\20200316121320_d_tc.cs" />
-    <Compile Remove="Migrations\20200316121320_d_tc.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
   </ItemGroup>
   

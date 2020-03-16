@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Delineation.Migrations
 {
     [DbContext(typeof(DelineationContext))]
-    [Migration("20200310130632_Add_D_Person")]
-    partial class Add_D_Person
+    [Migration("20200316162454_Initialize")]
+    partial class Initialize
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,19 +40,23 @@ namespace Delineation.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("D_Persons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "-",
+                            Patronymic = "-",
+                            Surname = "-"
+                        });
                 });
 
             modelBuilder.Entity("Delineation.Models.D_Res", b =>
                 {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("BuhId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("Code")
+                    b.Property<int?>("BuhId")
                         .HasColumnType("int");
 
                     b.Property<int?>("GlInzhId")
@@ -67,7 +71,7 @@ namespace Delineation.Migrations
                     b.Property<int?>("ZamNachId")
                         .HasColumnType("int");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("BuhId");
 
@@ -78,6 +82,63 @@ namespace Delineation.Migrations
                     b.HasIndex("ZamNachId");
 
                     b.ToTable("D_Reses");
+                });
+
+            modelBuilder.Entity("Delineation.Models.D_Tc", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Company")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FIO")
+                        .HasColumnType("nvarchar(70)")
+                        .HasMaxLength(70);
+
+                    b.Property<int>("InvNum")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Num")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<string>("ObjName")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
+                    b.Property<int>("Pillar")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Point")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Pow")
+                        .HasColumnType("nvarchar(7)")
+                        .HasMaxLength(7);
+
+                    b.Property<int?>("ResId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResId");
+
+                    b.ToTable("D_Tces");
                 });
 
             modelBuilder.Entity("Delineation.Models.D_Res", b =>
@@ -97,6 +158,13 @@ namespace Delineation.Migrations
                     b.HasOne("Delineation.Models.D_Person", "ZamNach")
                         .WithMany()
                         .HasForeignKey("ZamNachId");
+                });
+
+            modelBuilder.Entity("Delineation.Models.D_Tc", b =>
+                {
+                    b.HasOne("Delineation.Models.D_Res", "Res")
+                        .WithMany()
+                        .HasForeignKey("ResId");
                 });
 #pragma warning restore 612, 618
         }

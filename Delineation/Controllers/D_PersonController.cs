@@ -21,7 +21,7 @@ namespace Delineation.Controllers
         // GET: D_Person
         public async Task<IActionResult> Index()
         {
-            return View(await _context.D_Persons.ToListAsync());
+            return View(await _context.D_Persons.Where(p => p.Id != 1).ToListAsync());
         }
 
         // GET: D_Person/Details/5

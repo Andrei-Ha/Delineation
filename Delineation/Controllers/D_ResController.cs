@@ -38,7 +38,7 @@ namespace Delineation.Controllers
                 .Include(d => d.GlInzh)
                 .Include(d => d.Nach)
                 .Include(d => d.ZamNach)
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (d_Res == null)
             {
                 return NotFound();
@@ -50,8 +50,7 @@ namespace Delineation.Controllers
         // GET: D_Res/Create
         public IActionResult Create()
         {
-            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic })
-                .Prepend(new { Id =0, FIO = "---"});
+            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic });
             ViewData["BuhId"] = new SelectList(person_list, "Id", "FIO");
             ViewData["GlInzhId"] = new SelectList(person_list, "Id", "FIO");
             ViewData["NachId"] = new SelectList(person_list, "Id", "FIO");
@@ -64,7 +63,7 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Code,Name,NachId,ZamNachId,GlInzhId,BuhId")] D_Res d_Res)
+        public async Task<IActionResult> Create([Bind("Id,Name,NachId,ZamNachId,GlInzhId,BuhId")] D_Res d_Res)
         {
             if (ModelState.IsValid)
             {
@@ -72,8 +71,7 @@ namespace Delineation.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic })
-                .Prepend(new { Id = 0, FIO = "---" });
+            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic });
             ViewData["BuhId"] = new SelectList(person_list, "Id", "FIO", d_Res.BuhId);
             ViewData["GlInzhId"] = new SelectList(person_list, "Id", "FIO", d_Res.GlInzhId);
             ViewData["NachId"] = new SelectList(person_list, "Id", "FIO", d_Res.NachId);
@@ -94,8 +92,7 @@ namespace Delineation.Controllers
             {
                 return NotFound();
             }
-            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic })
-                .Prepend(new { Id = 0, FIO = "---" });
+            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic });
             ViewData["BuhId"] = new SelectList(person_list, "Id", "FIO", d_Res.BuhId);
             ViewData["GlInzhId"] = new SelectList(person_list, "Id", "FIO", d_Res.GlInzhId);
             ViewData["NachId"] = new SelectList(person_list, "Id", "FIO", d_Res.NachId);
@@ -108,9 +105,9 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Code,Name,NachId,ZamNachId,GlInzhId,BuhId")] D_Res d_Res)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NachId,ZamNachId,GlInzhId,BuhId")] D_Res d_Res)
         {
-            if (id != d_Res.ID)
+            if (id != d_Res.Id)
             {
                 return NotFound();
             }
@@ -124,7 +121,7 @@ namespace Delineation.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!D_ResExists(d_Res.ID))
+                    if (!D_ResExists(d_Res.Id))
                     {
                         return NotFound();
                     }
@@ -135,8 +132,7 @@ namespace Delineation.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic })
-                .Prepend(new { Id = 0, FIO = "---" });
+            var person_list = _context.D_Persons.ToList().Select(p => new { Id = p.Id, FIO = p.Surname + " " + p.Name + " " + p.Patronymic });
             ViewData["BuhId"] = new SelectList(person_list, "Id", "FIO", d_Res.BuhId);
             ViewData["GlInzhId"] = new SelectList(person_list, "Id", "FIO", d_Res.GlInzhId);
             ViewData["NachId"] = new SelectList(person_list, "Id", "FIO", d_Res.NachId);
@@ -157,7 +153,7 @@ namespace Delineation.Controllers
                 .Include(d => d.GlInzh)
                 .Include(d => d.Nach)
                 .Include(d => d.ZamNach)
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (d_Res == null)
             {
                 return NotFound();
@@ -179,7 +175,7 @@ namespace Delineation.Controllers
 
         private bool D_ResExists(int id)
         {
-            return _context.D_Reses.Any(e => e.ID == id);
+            return _context.D_Reses.Any(e => e.Id == id);
         }
     }
 }

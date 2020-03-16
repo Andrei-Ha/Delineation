@@ -51,7 +51,7 @@ namespace Delineation.Controllers
         // GET: D_Tc/Create
         public IActionResult Create()
         {
-            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "Name");
+            ViewData["ResId"] = new SelectList(_context.D_Reses, "Id", "Name");
             return View();
         }
 
@@ -68,7 +68,7 @@ namespace Delineation.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "Name", d_Tc.ResId);
+            ViewData["ResId"] = new SelectList(_context.D_Reses, "Id", "Name", d_Tc.ResId);
             return View(d_Tc);
         }
 
@@ -85,7 +85,7 @@ namespace Delineation.Controllers
             {
                 return NotFound();
             }
-            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "Name", d_Tc.ResId);
+            ViewData["ResId"] = new SelectList(_context.D_Reses, "Id", "Name", d_Tc.ResId);
             return View(d_Tc);
         }
 
@@ -121,7 +121,7 @@ namespace Delineation.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ResId"] = new SelectList(_context.D_Reses, "ID", "Name", d_Tc.ResId);
+            ViewData["ResId"] = new SelectList(_context.D_Reses, "Id", "Name", d_Tc.ResId);
             return View(d_Tc);
         }
 
@@ -163,24 +163,28 @@ namespace Delineation.Controllers
         public async Task<IActionResult> FromXlsx()
         {
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
-            string path_xlsx = _webHostEnvironment.WebRootPath + "\\Excel\\tc.xlsx";
+            string path_xlsx = _webHostEnvironment.WebRootPath + "\\Excel\\tc1.xlsx";
             var workbook = ExcelFile.Load(path_xlsx);
             ExcelWorksheet worksheet = workbook.Worksheets[0];
-            D_Tc model = new D_Tc();
-            int i = 3;
-            model.Num = worksheet.Cells["B" + i].Value.ToString();
-            //model.Date = worksheet.Cells["C" + i].Value.ToString();
-            model.ResId = Convert.ToInt32(worksheet.Cells["D" + i].Value);
-            model.Company = worksheet.Cells["E" + i].Value.ToString();
-            model.FIO = worksheet.Cells["F" + i].Value.ToString();
-            model.ObjName = worksheet.Cells["G" + i].Value.ToString();
-            model.Address = worksheet.Cells["H" + i].Value.ToString();
-            model.Pow = worksheet.Cells["I" + i].Value.ToString();
-            model.Category = Convert.ToInt32(worksheet.Cells["J" + i].Value);
-            model.Point = worksheet.Cells["K" + i].Value.ToString();
-            model.InvNum = Convert.ToInt32(worksheet.Cells["L" + i].Value);
-            model.Pillar = Convert.ToInt32(worksheet.Cells["M" + i].Value);
-            _context.Add(model);
+            for (int i = 3; i <= 73; i++)
+            {
+                _context.D_Tces.Add(new D_Tc()
+                {
+                    Num = worksheet.Cells["B" + i].Value?.ToString(),
+                    Date = DateTime.Parse(worksheet.Cells["C" + i].Value?.ToString()),
+                    ResId = Convert.ToInt32(worksheet.Cells["D" + i].Value?.ToString()),
+                    Company = worksheet.Cells["E" + i].Value?.ToString(),
+                    FIO = worksheet.Cells["F" + i].Value?.ToString(),
+                    ObjName = worksheet.Cells["G" + i].Value?.ToString(),
+                    Address = worksheet.Cells["H" + i].Value?.ToString(),
+                    Pow = worksheet.Cells["I" + i].Value?.ToString(),
+                    Category = Convert.ToInt32(worksheet.Cells["J" + i].Value?.ToString()),
+                    Point = worksheet.Cells["K" + i].Value?.ToString(),
+                    InvNum = Convert.ToInt32(worksheet.Cells["L" + i].Value?.ToString()),
+                    Pillar = Convert.ToInt32(worksheet.Cells["M" + i].Value?.ToString())
+                }
+                    );
+            }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

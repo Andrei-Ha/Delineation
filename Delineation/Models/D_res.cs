@@ -10,9 +10,10 @@ namespace Delineation.Models
 {
     public class D_Res
     {
-        public int ID { get; set; }
-        [Display(Name="Код")]
-        public int Code { get; set; }
+        [Key]
+        [Display(Name = "Код")]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { get; set; }
         [Display(Name ="Название")]
         public string Name { get; set; }
         public D_Person Nach { get; set; }
@@ -90,6 +91,10 @@ namespace Delineation.Models
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<D_Person>().HasData(
+                new D_Person() { Id = 1, Surname = "-", Name = "-", Patronymic = "-" }
+            );
+            base.OnModelCreating(modelBuilder);
             //Атрибут Table позволяет переопределить сопоставление с таблицей по имени: [Table("People")]
             //modelBuilder.Entity<D_Tc>().ToTable("TU")
             //С помощью дополнительного параметра schema можно определить схему, к которой будет принадлежать таблица:
@@ -121,7 +126,6 @@ namespace Delineation.Models
             //modelBuilder.Entity<D_Tc>().Ignore(p => p.TestFluentAPI);
             //modelBuilder.Entity<D_Tc>().
             //
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

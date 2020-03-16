@@ -38,19 +38,23 @@ namespace Delineation.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("D_Persons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "-",
+                            Patronymic = "-",
+                            Surname = "-"
+                        });
                 });
 
             modelBuilder.Entity("Delineation.Models.D_Res", b =>
                 {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("BuhId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("Code")
+                    b.Property<int?>("BuhId")
                         .HasColumnType("int");
 
                     b.Property<int?>("GlInzhId")
@@ -65,7 +69,7 @@ namespace Delineation.Migrations
                     b.Property<int?>("ZamNachId")
                         .HasColumnType("int");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("BuhId");
 
