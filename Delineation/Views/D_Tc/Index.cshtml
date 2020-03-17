@@ -13,6 +13,9 @@
     <thead>
         <tr>
             <th>
+                № п/п
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Num)
             </th>
             <th>
@@ -49,8 +52,13 @@
         </tr>
     </thead>
     <tbody>
+        @{ int i = 1;}
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @i.
+            </td>
+            @{ i++;}
             <td>
                 @Html.DisplayFor(modelItem => item.Num)
             </td>

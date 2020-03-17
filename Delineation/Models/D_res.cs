@@ -17,12 +17,16 @@ namespace Delineation.Models
         [Display(Name ="Название")]
         public string Name { get; set; }
         public D_Person Nach { get; set; }
+        [Display(Name = "начальник")]
         public int? NachId { get; set; }
         public D_Person ZamNach { get; set; }
+        [Display(Name = "зам.нач. по сбыту")]
         public int? ZamNachId { get; set; }
         public D_Person GlInzh { get; set; }
+        [Display(Name = "гл. инженер")]
         public int? GlInzhId { get; set; }
         public D_Person Buh { get; set; }
+        [Display(Name = "бухгалтер")]
         public int? BuhId { get; set; }
     }
     public class D_Person
@@ -80,6 +84,33 @@ namespace Delineation.Models
         [Display(Name ="Опора")]
         public int Pillar { get; set; }
     }
+    public class D_Act
+    {
+        public int Id { get; set; }
+        [Display(Name ="№ акта")]
+        public int Num { get; set; }
+        [Display(Name = "дата выдачи")]
+        public DateTime Date { get; set; }
+        [Display(Name = "юр. лицо?")]
+        public bool IsEntity { get; set; }
+        [Display(Name = "на основании чего")]
+        public string EntityDoc { get; set; }
+        [Display(Name = "На балансе потребителя")]
+        public string ConsBalance { get; set; }
+        [Display(Name = "Граница баланс. принадлежн. находится на ")]
+        public string DevBalabce { get; set; }
+        [Display(Name = "Эксплутационная ответственность потребителя")]
+        public string ConsExpl { get; set; }
+        [Display(Name = "Граница эксплутационной отв. находится на ")]
+        public string DevExpl { get; set; }
+        [Display(Name = "транзитные сети?")]
+        public bool IsTransit { get; set; }
+        [Display(Name = "ФИО представителя владельца транзитных электрических сетей")]
+        public string FIOtrans { get; set; }
+        [Display(Name = "Срок действия акта")]
+        public string Validity { get; set; }
+
+    }
     public class DelineationContext: DbContext 
     {
         public DbSet<D_Res> D_Reses { get; set; }
@@ -91,9 +122,28 @@ namespace Delineation.Models
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<D_Person>().HasData(
-                new D_Person() { Id = 1, Surname = "-", Name = "-", Patronymic = "-" }
+            modelBuilder.Entity<D_Person>().HasData(new D_Person[] {
+            new D_Person { Id = 1, Surname = "-", Name = "-", Patronymic = "-" },
+            new D_Person { Id = 2, Surname = "Булавин", Name = "Виталий", Patronymic = "Федорович" },
+            new D_Person { Id = 3, Surname = "Литвинчук", Name = "Александр", Patronymic = "Иванович" },
+            new D_Person { Id = 4, Surname = "Германович", Name = "Андрей", Patronymic = "Михайлович" },
+            new D_Person { Id = 5, Surname = "Велесницкая", Name = "Татьяна", Patronymic = "Вячеславовна" },
+            new D_Person { Id = 6, Surname = "Забавнюк", Name = "Владимир", Patronymic = "Францевич" },
+            new D_Person { Id = 7, Surname = "Калилец", Name = "Федор", Patronymic = "Иванович" },
+            new D_Person { Id = 8, Surname = "Климович", Name = "Анатолий", Patronymic = "Леонидович" },
+            new D_Person { Id = 9, Surname = "Крейдич", Name = "Сиана", Patronymic = "Владимировна" }
+            }
             );
+            modelBuilder.Entity<D_Res>().HasData(
+                new D_Res[]
+                {
+                    new D_Res{ Id=54100, Name="Пинский Городской РЭС", BuhId=5, GlInzhId=3, NachId=2, ZamNachId=4},
+                    new D_Res{ Id=54200, Name="Пинский Сельский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
+                    new D_Res{ Id=54300, Name="Лунинецкий РЭС", BuhId=9, GlInzhId=8, NachId=6, ZamNachId=7},
+                    new D_Res{ Id=54400, Name="Столинский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
+                    new D_Res{ Id=54500, Name="Ивановский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
+                    new D_Res{ Id=54600, Name="Дрогичинский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1}
+                });
             base.OnModelCreating(modelBuilder);
             //Атрибут Table позволяет переопределить сопоставление с таблицей по имени: [Table("People")]
             //modelBuilder.Entity<D_Tc>().ToTable("TU")
