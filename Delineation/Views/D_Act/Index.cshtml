@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Delineation.Models.D_Act>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Num)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsEntity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EntityDoc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConsBalance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DevBalabce)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConsExpl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DevExpl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsTransit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FIOtrans)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Validity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Num)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tc.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsEntity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EntityDoc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConsBalance)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DevBalabce)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConsExpl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DevExpl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsTransit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FIOtrans)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Validity)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
