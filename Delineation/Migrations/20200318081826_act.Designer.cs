@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Delineation.Migrations
 {
     [DbContext(typeof(DelineationContext))]
-    [Migration("20200317180931_act")]
+    [Migration("20200318081826_act")]
     partial class act
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,9 +37,11 @@ namespace Delineation.Migrations
                         .HasMaxLength(250);
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<string>("DevBalabce")
+                    b.Property<string>("DevBalance")
                         .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
@@ -60,9 +62,6 @@ namespace Delineation.Migrations
 
                     b.Property<bool>("IsTransit")
                         .HasColumnType("bit");
-
-                    b.Property<int>("Num")
-                        .HasColumnType("int");
 
                     b.Property<int?>("TcId")
                         .HasColumnType("int");
@@ -209,20 +208,20 @@ namespace Delineation.Migrations
                         new
                         {
                             Id = 54200,
-                            BuhId = 1,
-                            GlInzhId = 1,
-                            NachId = 1,
+                            BuhId = 9,
+                            GlInzhId = 8,
+                            NachId = 6,
                             Name = "Пинский Сельский РЭС",
-                            ZamNachId = 1
+                            ZamNachId = 7
                         },
                         new
                         {
                             Id = 54300,
-                            BuhId = 9,
-                            GlInzhId = 8,
-                            NachId = 6,
+                            BuhId = 1,
+                            GlInzhId = 1,
+                            NachId = 1,
                             Name = "Лунинецкий РЭС",
-                            ZamNachId = 7
+                            ZamNachId = 1
                         },
                         new
                         {

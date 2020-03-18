@@ -4,84 +4,25 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Добавление нового акта разграничения</h1>
 
-<h4>D_Act</h4>
+<h4>На основании выданных технических условий:</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Num" class="control-label"></label>
-                <input asp-for="Num" class="form-control" />
-                <span asp-validation-for="Num" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" />
-                <span asp-validation-for="Date" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="TcId" class="control-label"></label>
                 <select asp-for="TcId" class ="form-control" asp-items="ViewBag.TcId"></select>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsEntity" /> @Html.DisplayNameFor(model => model.IsEntity)
-                </label>
-            </div>
             <div class="form-group">
-                <label asp-for="EntityDoc" class="control-label"></label>
-                <input asp-for="EntityDoc" class="form-control" />
-                <span asp-validation-for="EntityDoc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConsBalance" class="control-label"></label>
-                <input asp-for="ConsBalance" class="form-control" />
-                <span asp-validation-for="ConsBalance" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DevBalabce" class="control-label"></label>
-                <input asp-for="DevBalabce" class="form-control" />
-                <span asp-validation-for="DevBalabce" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConsExpl" class="control-label"></label>
-                <input asp-for="ConsExpl" class="form-control" />
-                <span asp-validation-for="ConsExpl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DevExpl" class="control-label"></label>
-                <input asp-for="DevExpl" class="form-control" />
-                <span asp-validation-for="DevExpl" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsTransit" /> @Html.DisplayNameFor(model => model.IsTransit)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="FIOtrans" class="control-label"></label>
-                <input asp-for="FIOtrans" class="form-control" />
-                <span asp-validation-for="FIOtrans" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Validity" class="control-label"></label>
-                <input asp-for="Validity" class="form-control" />
-                <span asp-validation-for="Validity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Создать" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Назад к списку</a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

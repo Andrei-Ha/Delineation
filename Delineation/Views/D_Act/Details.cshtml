@@ -1,90 +1,163 @@
 ﻿@model Delineation.Models.D_Act
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Подробно";
 }
 
-<h1>Details</h1>
+    <h1>Подробно</h1>
 
 <div>
-    <h4>D_Act</h4>
+    <h4>Акты</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Num)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Num)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tc.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsEntity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsEntity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EntityDoc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EntityDoc)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ConsBalance)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ConsBalance)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DevBalabce)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DevBalabce)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ConsExpl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ConsExpl)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DevExpl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DevExpl)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsTransit)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsTransit)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FIOtrans)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FIOtrans)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Validity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Validity)
-        </dd>
-    </dl>
+    <table style="width:100%">
+        <tr>
+            <td></td>
+        </tr>
+        <tr>
+            <td style="width:50%; vertical-align:top">
+                <dl>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.Date)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.Date)
+                    </dd>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.Tc)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.Tc.Id)
+                    </dd>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.IsEntity)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.IsEntity)
+                    </dd>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.EntityDoc)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.EntityDoc)
+                    </dd>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.ConsBalance)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.ConsBalance)
+                    </dd>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.DevBalance)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.DevBalance)
+                    </dd>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.ConsExpl)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.ConsExpl)
+                    </dd>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.DevExpl)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.DevExpl)
+                    </dd>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.IsTransit)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.IsTransit)
+                    </dd>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.FIOtrans)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.FIOtrans)
+                    </dd>
+                    <dt >
+                        @Html.DisplayNameFor(model => model.Validity)
+                    </dt>
+                    <dd >
+                        @Html.DisplayFor(model => model.Validity)
+                    </dd>
+                </dl>
+            </td>
+            <td style="width:50%; vertical-align:top">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.Num)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.Num)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.Date)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.Date)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.Res)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.Res.Name)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.Company)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.Company)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.FIO)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.FIO)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.ObjName)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.ObjName)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.Address)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.Address)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.Pow)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.Pow)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.Category)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.Category)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.Point)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.Point)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Tc.InvNum)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Tc.InvNum)
+                    </dd>
+                </dl>
+            </td>
+        </tr>
+    </table>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a> |
+    <a asp-action="Index">Назад к списку</a>
 </div>

@@ -13,13 +13,12 @@ namespace Delineation.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Num = table.Column<int>(nullable: false),
-                    Date = table.Column<DateTime>(nullable: false),
+                    Date = table.Column<DateTime>(nullable: false, defaultValueSql: "GETDATE()"),
                     TcId = table.Column<int>(nullable: true),
                     IsEntity = table.Column<bool>(nullable: false),
                     EntityDoc = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ConsBalance = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
-                    DevBalabce = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    DevBalance = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     ConsExpl = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     DevExpl = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     IsTransit = table.Column<bool>(nullable: false),
@@ -47,7 +46,7 @@ namespace Delineation.Migrations
             migrationBuilder.UpdateData(
                 table: "D_Reses",
                 keyColumn: "Id",
-                keyValue: 54300,
+                keyValue: 54200,
                 columns: new[] { "BuhId", "GlInzhId", "NachId", "ZamNachId" },
                 values: new object[] { 9, 8, 6, 7 });
 
@@ -72,7 +71,7 @@ namespace Delineation.Migrations
             migrationBuilder.UpdateData(
                 table: "D_Reses",
                 keyColumn: "Id",
-                keyValue: 54300,
+                keyValue: 54200,
                 columns: new[] { "BuhId", "GlInzhId", "NachId", "ZamNachId" },
                 values: new object[] { 1, 1, 1, 1 });
         }

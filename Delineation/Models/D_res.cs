@@ -15,7 +15,7 @@ namespace Delineation.Models
         [Display(Name = "Код")]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
-        [Display(Name ="Название")]
+        [Display(Name ="РЭС")]
         public string Name { get; set; }
         public D_Person Nach { get; set; }
         [Display(Name = "начальник")]
@@ -89,27 +89,24 @@ namespace Delineation.Models
     {
         public int Id { get; set; }
 
-        [Display(Name ="№ акта")]
-        public int Num { get; set; }
-
-        [Display(Name = "дата выдачи"), DataType(DataType.Date)]
+        [Display(Name = "дата выдачи акта"), DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
         public D_Tc Tc { get; set; }
         [Display(Name ="ТУ")]
         public int? TcId { get; set; }
 
-        [Display(Name = "юр. лицо?")]
+        [Display(Name = "юр. лицо")]
         public bool IsEntity { get; set; }
 
-        [Display(Name = "на основании чего"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
+        [Display(Name = "на основании чего(доверенности, устава)"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
         public string EntityDoc { get; set; }
 
         [Display(Name = "На балансе потребителя"), Column(TypeName = "nvarchar(250)"), StringLength(250)]
         public string ConsBalance { get; set; }
 
         [Display(Name = "Граница баланс. принадлежн. находится на "), Column(TypeName = "nvarchar(150)"), StringLength(150)]
-        public string DevBalabce { get; set; }
+        public string DevBalance { get; set; }
 
         [Display(Name = "Эксплутационная ответственность потребителя"), Column(TypeName = "nvarchar(250)"), StringLength(250)]
         public string ConsExpl { get; set; }
@@ -117,7 +114,7 @@ namespace Delineation.Models
         [Display(Name = "Граница эксплутационной отв. находится на "), Column(TypeName = "nvarchar(150)"), StringLength(150)]
         public string DevExpl { get; set; }
 
-        [Display(Name = "транзитные сети?")]
+        [Display(Name = "транзитные сети")]
         public bool IsTransit { get; set; }
 
         [Display(Name = "ФИО представителя владельца транзитных электрических сетей"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
@@ -155,12 +152,13 @@ namespace Delineation.Models
                 new D_Res[]
                 {
                     new D_Res{ Id=54100, Name="Пинский Городской РЭС", BuhId=5, GlInzhId=3, NachId=2, ZamNachId=4},
-                    new D_Res{ Id=54200, Name="Пинский Сельский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
-                    new D_Res{ Id=54300, Name="Лунинецкий РЭС", BuhId=9, GlInzhId=8, NachId=6, ZamNachId=7},
+                    new D_Res{ Id=54200, Name="Пинский Сельский РЭС", BuhId=9, GlInzhId=8, NachId=6, ZamNachId=7},
+                    new D_Res{ Id=54300, Name="Лунинецкий РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
                     new D_Res{ Id=54400, Name="Столинский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
                     new D_Res{ Id=54500, Name="Ивановский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
                     new D_Res{ Id=54600, Name="Дрогичинский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1}
                 });
+            modelBuilder.Entity<D_Act>().Property(p => p.Date).HasDefaultValueSql("GETDATE()");
             base.OnModelCreating(modelBuilder);
             {
                 //Атрибут Table позволяет переопределить сопоставление с таблицей по имени: [Table("People")]
