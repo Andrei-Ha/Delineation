@@ -15,8 +15,10 @@ namespace Delineation.Models
         [Display(Name = "Код")]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
+
         [Display(Name ="РЭС")]
         public string Name { get; set; }
+
         public D_Person Nach { get; set; }
         [Display(Name = "начальник")]
         public int? NachId { get; set; }
@@ -29,16 +31,34 @@ namespace Delineation.Models
         public D_Person Buh { get; set; }
         [Display(Name = "бухгалтер")]
         public int? BuhId { get; set; }
+
+        [Display(Name = "город"), Column(TypeName = "nvarchar(30)"), StringLength(30)]
+        public string City { get; set; }
+
+        [Display(Name = "РЭСа"), Column(TypeName = "nvarchar(30)"), StringLength(30)]
+        public string  RESa{ get; set; }
+
+        [Display(Name = "РЭСом"), Column(TypeName = "nvarchar(30)"), StringLength(30)]
+        public string RESom { get; set; }
+
+        [Display(Name = "Ф.И.О. нач. в родит.падеже"), Column(TypeName = "nvarchar(30)"), StringLength(30)]
+        public string FIOnachRod { get; set; }
+
+        [Display(Name = "доверенность '№_ от _'"), Column(TypeName = "nvarchar(30)"), StringLength(30)]
+        public string Dover { get; set; }
     }
     public class D_Person
     {
         public int Id { get; set; }
-        [Display(Name ="Фамилия")]        
+        [Display(Name ="Фамилия"), Column(TypeName = "nvarchar(70)"), StringLength(70)]        
         public string Surname { get; set; }
-        [Display(Name="Имя")]
+
+        [Display(Name="Имя"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
         public string Name { get; set; }
-        [Display(Name="Отчество")]
+
+        [Display(Name="Отчество"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
         public string Patronymic { get; set; }
+
         [NotMapped]
         public string FIO { get; set; }
     }
@@ -82,8 +102,8 @@ namespace Delineation.Models
         [Display(Name = "Инв. №")]
         public int InvNum { get; set; }
 
-        [Display(Name ="Опора")]
-        public int Pillar { get; set; }
+        [Display(Name ="Опора"), Column(TypeName = "nvarchar(10)"), StringLength(10)]
+        public string Pillar { get; set; }
     }
     public class D_Act
     {
@@ -99,7 +119,7 @@ namespace Delineation.Models
         [Display(Name = "юр. лицо")]
         public bool IsEntity { get; set; }
 
-        [Display(Name = "на основании чего(доверенности, устава)"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
+        [Display(Name = "действующ. на основании (доверенности, устава) №"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
         public string EntityDoc { get; set; }
 
         [Display(Name = "На балансе потребителя"), Column(TypeName = "nvarchar(250)"), StringLength(250)]
@@ -151,12 +171,12 @@ namespace Delineation.Models
             modelBuilder.Entity<D_Res>().HasData(
                 new D_Res[]
                 {
-                    new D_Res{ Id=54100, Name="Пинский Городской РЭС", BuhId=5, GlInzhId=3, NachId=2, ZamNachId=4},
-                    new D_Res{ Id=54200, Name="Пинский Сельский РЭС", BuhId=9, GlInzhId=8, NachId=6, ZamNachId=7},
-                    new D_Res{ Id=54300, Name="Лунинецкий РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
-                    new D_Res{ Id=54400, Name="Столинский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
-                    new D_Res{ Id=54500, Name="Ивановский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
-                    new D_Res{ Id=54600, Name="Дрогичинский РЭС", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1}
+                    new D_Res{ Id=54100, Name="Пинский Городской", BuhId=5, GlInzhId=3, NachId=2, ZamNachId=4, City="Пинск", RESa="Пинского Городского", RESom="Пинским Городским", FIOnachRod="Булавина Виталия Федоровича", Dover="от 01.09.2019 №2432"},
+                    new D_Res{ Id=54200, Name="Пинский Сельский", BuhId=9, GlInzhId=8, NachId=6, ZamNachId=7, City="Пинск", RESa="Пинсого Сельского", RESom="Пинским Сельским", FIOnachRod="Забавнюка Владимира Францевича", Dover="от 01.09.2019 №2432"},
+                    new D_Res{ Id=54300, Name="Лунинецкий", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
+                    new D_Res{ Id=54400, Name="Столинский", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
+                    new D_Res{ Id=54500, Name="Ивановский", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
+                    new D_Res{ Id=54600, Name="Дрогичинский", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1}
                 });
             modelBuilder.Entity<D_Act>().Property(p => p.Date).HasDefaultValueSql("GETDATE()");
             base.OnModelCreating(modelBuilder);

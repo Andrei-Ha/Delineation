@@ -63,7 +63,7 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,NachId,ZamNachId,GlInzhId,BuhId")] D_Res d_Res)
+        public async Task<IActionResult> Create([Bind("Id,Name,NachId,ZamNachId,GlInzhId,BuhId,City,RESa,RESom,FIOnachRod,Dover")] D_Res d_Res)
         {
             if (ModelState.IsValid)
             {
@@ -105,7 +105,7 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NachId,ZamNachId,GlInzhId,BuhId")] D_Res d_Res)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NachId,ZamNachId,GlInzhId,BuhId,City,RESa,RESom,FIOnachRod,Dover")] D_Res d_Res)
         {
             if (id != d_Res.Id)
             {

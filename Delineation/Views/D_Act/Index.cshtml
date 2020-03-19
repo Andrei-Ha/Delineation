@@ -30,6 +30,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Tc.Address)
             </th>
+            <td>
+                
+            </td>
             <th></th>
         </tr>
     </thead>
@@ -53,6 +56,10 @@
             </td>
             <td>
                 @Html.DisplayFor(model => item.Tc.Address)
+            </td>
+            <td>
+                @{ string link = "../Output/pdf/" + item.Id + ".pdf";}
+                <a href="@link" rel="noopener noreferrer" target="_blank">акт</a>
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">изменить</a>   <br />

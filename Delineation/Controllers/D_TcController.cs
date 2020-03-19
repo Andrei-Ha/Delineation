@@ -181,7 +181,7 @@ namespace Delineation.Controllers
                     Category = Convert.ToInt32(worksheet.Cells["J" + i].Value?.ToString()),
                     Point = worksheet.Cells["K" + i].Value?.ToString(),
                     InvNum = Convert.ToInt32(worksheet.Cells["L" + i].Value?.ToString()),
-                    Pillar = Convert.ToInt32(worksheet.Cells["M" + i].Value?.ToString())
+                    Pillar = worksheet.Cells["M" + i].Value?.ToString()
                 }
                     );
             }

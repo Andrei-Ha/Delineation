@@ -10,34 +10,62 @@
     <h4>Подразделение</h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Id)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Id)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.City)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.City)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.RESa)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.RESa)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.RESom)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.RESom)
+        </dd>
+        <dt class="col-sm-3">
+            начальник
+        </dt>
+        <dd class="col-sm-9">
+            @(Model.Nach?.Surname + " " + Model.Nach?.Name + " " + Model.Nach?.Patronymic)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.FIOnachRod)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.FIOnachRod)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Dover)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Dover)
+        </dd>
+        <dt class="col-sm-3">
             Представители
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-9">
             <table>
                 <tr>
                     <td>
-                        начальник:
-                    </td>
-                    <td>
-                        <i>@(Model.Nach?.Surname + " " + Model.Nach?.Name + " " + Model.Nach?.Patronymic)</i>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        зам.нач. по сбыту:
+                        <b>зам.нач. по сбыту:</b>
                     </td>
                     <td>
                         <i>@(Model.ZamNach?.Surname + " " + Model.ZamNach?.Name + " " + Model.ZamNach?.Patronymic)</i>
@@ -45,7 +73,7 @@
                 </tr>
                 <tr>
                     <td>
-                        гл. инженер:
+                        <b>гл. инженер:</b>
                     </td>
                     <td>
                         <i>@(Model.GlInzh?.Surname + " " + Model.GlInzh?.Name + " " + Model.GlInzh?.Patronymic)</i>
@@ -53,7 +81,7 @@
                 </tr>
                 <tr>
                     <td>
-                        бухгалтер:
+                        <b>бухгалтер:</b>
                     </td>
                     <td>
                         <i>@(Model.Buh?.Surname + " " + Model.Buh?.Name + " " + Model.Buh?.Patronymic)</i>

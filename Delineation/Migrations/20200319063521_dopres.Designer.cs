@@ -4,14 +4,16 @@ using Delineation.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Delineation.Migrations
 {
     [DbContext(typeof(DelineationContext))]
-    partial class DelineationContextModelSnapshot : ModelSnapshot
+    [Migration("20200319063521_dopres")]
+    partial class dopres
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,10 +225,10 @@ namespace Delineation.Migrations
                             BuhId = 5,
                             City = "Пинск",
                             Dover = "от 01.09.2019 №2432",
-                            FIOnachRod = "Булавина Виталия Федоровича",
+                            FIOnachRod = "Булавина В.Ф.",
                             GlInzhId = 3,
                             NachId = 2,
-                            Name = "Пинский Городской",
+                            Name = "Пинский Городской РЭС",
                             RESa = "Пинского Городского",
                             RESom = "Пинским Городским",
                             ZamNachId = 4
@@ -237,10 +239,10 @@ namespace Delineation.Migrations
                             BuhId = 9,
                             City = "Пинск",
                             Dover = "от 01.09.2019 №2432",
-                            FIOnachRod = "Забавнюка Владимира Францевича",
+                            FIOnachRod = "Забавнюка В.Ф.",
                             GlInzhId = 8,
                             NachId = 6,
-                            Name = "Пинский Сельский",
+                            Name = "Пинский Сельский РЭС",
                             RESa = "Пинсого Сельского",
                             RESom = "Пинским Сельским",
                             ZamNachId = 7
@@ -251,7 +253,7 @@ namespace Delineation.Migrations
                             BuhId = 1,
                             GlInzhId = 1,
                             NachId = 1,
-                            Name = "Лунинецкий",
+                            Name = "Лунинецкий РЭС",
                             ZamNachId = 1
                         },
                         new
@@ -260,7 +262,7 @@ namespace Delineation.Migrations
                             BuhId = 1,
                             GlInzhId = 1,
                             NachId = 1,
-                            Name = "Столинский",
+                            Name = "Столинский РЭС",
                             ZamNachId = 1
                         },
                         new
@@ -269,7 +271,7 @@ namespace Delineation.Migrations
                             BuhId = 1,
                             GlInzhId = 1,
                             NachId = 1,
-                            Name = "Ивановский",
+                            Name = "Ивановский РЭС",
                             ZamNachId = 1
                         },
                         new
@@ -278,7 +280,7 @@ namespace Delineation.Migrations
                             BuhId = 1,
                             GlInzhId = 1,
                             NachId = 1,
-                            Name = "Дрогичинский",
+                            Name = "Дрогичинский РЭС",
                             ZamNachId = 1
                         });
                 });
@@ -319,9 +321,8 @@ namespace Delineation.Migrations
                         .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
-                    b.Property<string>("Pillar")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
+                    b.Property<int>("Pillar")
+                        .HasColumnType("int");
 
                     b.Property<string>("Point")
                         .HasColumnType("nvarchar(50)")
