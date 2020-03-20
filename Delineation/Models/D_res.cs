@@ -90,7 +90,7 @@ namespace Delineation.Models
         [Display(Name = "Адрес объекта строительства"), Column(TypeName = "nvarchar(200)"), StringLength(200)]
         public string Address { get; set; }
 
-        [Display(Name = "Разрешенная мощность"),Column(TypeName ="nvarchar(7)"),StringLength(7,ErrorMessage ="допустимая длинна - 7 символов")]
+        [Display(Name = "Разрешенная мощность, кВт."),Column(TypeName ="nvarchar(7)"),StringLength(7,ErrorMessage ="допустимая длинна - 7 символов")]
         public string Pow { get; set; }
 
         [Display(Name = "Категория")]

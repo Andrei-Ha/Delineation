@@ -60,7 +60,7 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Num,Date,ResId,Company,FIO,ObjName,Address,Pow,Category,Point,InvNum")] D_Tc d_Tc)
+        public async Task<IActionResult> Create([Bind("Id,Num,Date,ResId,Company,FIO,ObjName,Address,Pow,Category,Point,Pillar,InvNum")] D_Tc d_Tc)
         {
             if (ModelState.IsValid)
             {
@@ -94,7 +94,7 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Num,Date,ResId,Company,FIO,ObjName,Address,Pow,Category,Point,InvNum")] D_Tc d_Tc)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Num,Date,ResId,Company,FIO,ObjName,Address,Pow,Category,Point,Pillar,InvNum")] D_Tc d_Tc)
         {
             if (id != d_Tc.Id)
             {
@@ -170,7 +170,7 @@ namespace Delineation.Controllers
             {
                 _context.D_Tces.Add(new D_Tc()
                 {
-                    Num = worksheet.Cells["B" + i].Value?.ToString(),
+                    Num = worksheet.Cells["B" + i].Value?.ToString().Replace('№',' ').Trim(),
                     Date = DateTime.Parse(worksheet.Cells["C" + i].Value?.ToString()),
                     ResId = Convert.ToInt32(worksheet.Cells["D" + i].Value?.ToString()),
                     Company = worksheet.Cells["E" + i].Value?.ToString(),
