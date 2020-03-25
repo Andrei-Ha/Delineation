@@ -1,52 +1,152 @@
 ﻿@{
     ViewData["Title"] = "Начальная";
 }
+    <style type="text/css">
+        .static {
+            cursor: not-allowed;
+        }
+        .draggable {
+            cursor: move;
+        }
+        .draggable-group {
+            cursor: move;
+        }
+    </style>
 <script type="text/javascript">
     function PutInJpeg() {
+        //-------------------   svg   --------------------
+        var html_svg = document.querySelector("svg").parentNode.innerHTML;
+        var img_src = 'data:image/svg+xml;base64,' + btoa(html_svg);
+        document.getElementById("svg").value = encodeURIComponent(img_src)
+        //------------------------------------------------
+        var myCanvas = document.querySelector("canvas");
+        myCanvas.setAttribute('width', 3000);
+        myCanvas.setAttribute('height', 2000);
+        var context = myCanvas.getContext("2d");
+        //------------------------------------------------
+        var image = new Image;
+        image.src = img_src;
+        /*image.width = 300;
+        image.height = 200;*/
+        image.onload = function () {
+            context.drawImage(image, 0, 0);
+            var myCanvas = document.querySelector("canvas");
+            document.getElementById("png").value = encodeURIComponent(myCanvas.toDataURL()); //The default format type is image/png  ->  or 'image/jpeg'
+            myCanvas.parentNode.removeChild(myCanvas);
+            document.getElementById("MyForm").submit();
+            //document.getElementById("Label").innerText = document.getElementById("png").value;
+        }
+                    //encodeURIComponent этот метод заменяет все символы, кроме:символов латинского алфавита, десятичных цифр и - _. ! ~ * ' ( ).
+                    // !!!  иначе в строке myCanvas.toDataURL() при post передаче исчезнут все символы '+'
+    }
+    function makeDraggable(evt) {
+        var svg = evt.target;
 
+        svg.addEventListener('mousedown', startDrag);
+        svg.addEventListener('mousemove', drag);
+        svg.addEventListener('mouseup', endDrag);
+        svg.addEventListener('mouseleave', endDrag);
+        svg.addEventListener('touchstart', startDrag);
+        svg.addEventListener('touchmove', drag);
+        svg.addEventListener('touchend', endDrag);
+        svg.addEventListener('touchleave', endDrag);
+        svg.addEventListener('touchcancel', endDrag);
+
+        var selectedElement, offset, transform,
+            bbox, minX, maxX, minY, maxY, confined;
+
+        var boundaryX1 = 1;
+        var boundaryX2 = 299;
+        var boundaryY1 = 1;
+        var boundaryY2 = 199;
+
+        function getMousePosition(evt) {
+            var CTM = svg.getScreenCTM();
+            if (evt.touches) { evt = evt.touches[0]; }
+            return {
+                x: (evt.clientX - CTM.e) / CTM.a,
+                y: (evt.clientY - CTM.f) / CTM.d
+            };
+        }
+        function startDrag(evt) {
+            if (evt.target.classList.contains('draggable') || evt.target.parentNode.classList.contains("draggable-group")) {
+                selectedElement = evt.target;
+                if (evt.target.parentNode.classList.contains("draggable-group")) selectedElement = evt.target.parentNode;
+                offset = getMousePosition(evt);
+
+                // Make sure the first transform on the element is a translate transform
+                var transforms = selectedElement.transform.baseVal;
+
+                if (transforms.length === 0 || transforms.getItem(0).type !== SVGTransform.SVG_TRANSFORM_TRANSLATE) {
+                    // Create an transform that translates by (0, 0)
+                    var translate = svg.createSVGTransform();
+                    translate.setTranslate(0, 0);
+                    selectedElement.transform.baseVal.insertItemBefore(translate, 0);
+                }
+
+                // Get initial translation
+                transform = transforms.getItem(0);
+                offset.x -= transform.matrix.e;
+                offset.y -= transform.matrix.f;
+
+                confined = evt.target.classList.contains('confine');
+                if (confined) {
+                    bbox = selectedElement.getBBox();
+                    minX = boundaryX1 - bbox.x;
+                    maxX = boundaryX2 - bbox.x - bbox.width;
+                    minY = boundaryY1 - bbox.y;
+                    maxY = boundaryY2 - bbox.y - bbox.height;
+                }
+            }
+        }
+
+        function drag(evt) {
+            if (selectedElement) {
+                evt.preventDefault();
+
+                var coord = getMousePosition(evt);
+                var dx = coord.x - offset.x;
+                var dy = coord.y - offset.y;
+
+                if (confined) {
+                    if (dx < minX) { dx = minX; }
+                    else if (dx > maxX) { dx = maxX; }
+                    if (dy < minY) { dy = minY; }
+                    else if (dy > maxY) { dy = maxY; }
+                }
+
+                transform.setTranslate(dx, dy);
+            }
+        }
+
+        function endDrag(evt) {
+            selectedElement = false;
+        }
     }
 </script>
-    <div class="text-center">
-
-        <h1 class="display-4">Добро пожаловать!</h1>
-        <form id="MyForm" asp-action="SavePNG" method="post">
-            <input type="hidden" id="png" name="png" />
-            <input type="hidden" id="svg" name="svg" />
-            <input type="submit" value="Сохранить" />
-        </form>
-        <div>
-            <svg xmlns="http://www.w3.org/2000/svg"
-                 width="526" height="233">
-                <rect x="13" y="14" width="500" height="200" rx="50" ry="100"
-                      fill="none" stroke="blue" stroke-width="10" />
-            </svg>
-        </div>
-        <div>
-            <canvas width="1" height="1"></canvas>
-        </div>
-        <label id="Label">mypics</label><br />
-        <img src="~/Temp/mypict.png" />
-        <script type="text/javascript">
-            //-------------------   svg   --------------------
-            var html_svg = document.querySelector("svg").parentNode.innerHTML;
-            var img_src = 'data:image/svg+xml;base64,' + btoa(html_svg);
-            document.getElementById("svg").value = encodeURIComponent(img_src)
-            //------------------------------------------------
-            var myCanvas = document.querySelector("canvas");
-            myCanvas.setAttribute('width', 526);
-            myCanvas.setAttribute('height', 233);
-            var context = myCanvas.getContext("2d");
-            //------------------------------------------------
-            var image = new Image;
-            image.src = img_src;
-            image.onload = function () {
-                context.drawImage(image, 0, 0);
-                document.getElementById("png").value = encodeURIComponent(myCanvas.toDataURL()); //The default format type is image/png  ->  or 'image/jpeg'
-                //var canvasdata = canvas.toDataURL("image/png");
-            }
-            //encodeURIComponent этот метод заменяет все символы, кроме:символов латинского алфавита, десятичных цифр и - _. ! ~ * ' ( ).
-            // !!!  иначе в строке myCanvas.toDataURL() при post передаче исчезнут все символы '+'
-            myCanvas.parentNode.removeChild(myCanvas);
-            //document.getElementById("Label").innerText = document.getElementById("png").value;
-        </script>
+<div class="text-center">
+    <h1 class="display-4">Добро пожаловать!</h1>
+    <form id="MyForm" asp-action="SavePNG" method="post">
+        <input type="hidden" id="png" name="png" />
+        <input type="hidden" id="svg" name="svg" />
+        <input type="submit" onclick="PutInJpeg(); return false;" value="Сохранить" />
+    </form>
+    <div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" onload="makeDraggable(evt)">
+            <rect x="0" y="0" width="300" height="200" fill="gray" />
+            <rect x="1" y="1" width="298" height="198" fill="white" />
+            <rect class="static" fill="#888" x="10" y="50" width="30" height="80" />
+            <rect class="draggable" fill="#007bff" x="10" y="170" width="30" height="80" />
+            <ellipse class="draggable confine" fill="#ff00af" cx="250" cy="150" rx="30" ry="20"  />
+            <text class="draggable confine" x="100" y="100" text-anchor="middle" font-size="5px" alignment-baseline="middle">Drag</text>
+        </svg>
     </div>
+    <div>
+        <canvas width="1" height="1"></canvas>
+    </div>
+    <!--<label id="Label"></label><br />
+    <img src="~/Temp/mypict.png" />-->
+    <script type="text/javascript">
+
+    </script>
+</div>
