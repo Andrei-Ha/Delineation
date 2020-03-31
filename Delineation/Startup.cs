@@ -25,8 +25,9 @@ namespace Delineation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connString = Configuration.GetConnectionString("DefaultConnection");
+            //string connString = Configuration.GetConnectionString("DefaultConnection");
             //string connString = Configuration.GetConnectionString("ConnectionAndr-SQL");
+            string connString = Configuration.GetConnectionString("ConnectionPirr2n");
             services.AddDbContext<DelineationContext>(options => options.UseSqlServer(connString));
             services.AddControllersWithViews();
         }
