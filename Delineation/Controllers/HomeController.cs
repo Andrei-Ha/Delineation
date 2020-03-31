@@ -11,11 +11,19 @@ using GemBox.Document.Tables;
 using Microsoft.AspNetCore.Hosting;
 using System.Net;
 using System.IO;
+using Oracle.ManagedDataAccess.Client;
+using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sql;
+
 
 namespace Delineation.Controllers
 {
     public class HomeController : Controller
     {
+        //private string ConnectionString = "Data Source=pirr1;Persist Security Info=True;User ID=pinsk;Password=pes";
+        //private string ConnStringOracle = "Data Source=//10.181.64.2/pirr2nora;User Id = pinsk;Password=pes";
+        private string ConnStringOracle = "Data Source=//10.181.64.7/orcl7;User Id = sel;Password=2222";
+        private string ConnStringSql = "Server=Pirr2n; database=pinskbase; User Id = ppinsk; Password=pes";
         private readonly ILogger<HomeController> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -68,6 +76,43 @@ namespace Delineation.Controllers
         }
         public IActionResult Privacy()
         {
+            string str_result = "";
+            using (OracleConnection con = new OracleConnection(ConnStringOracle))
+            {
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    con.Open();
+                    cmd.BindByName = true;
+                    //cmd.CommandText = "select strange_str, substr(doc_code,TO_NUMBER(INSTR(doc_code,'-',1,2))+1) as NUM from VL10 where DOC_CODE=:id";
+                    cmd.CommandText = "select strange_str from VL10 where substr(doc_code,TO_NUMBER(INSTR(doc_code,'-',1,2))+1)=209";
+                    OracleParameter id = new OracleParameter("id", "50515405-VL10-209");
+                    cmd.Parameters.Add(id);
+                    OracleDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        str_result += reader["strange_str"];
+                    }
+                    reader.Dispose();
+                }
+            }
+            /*using (SqlConnection con = new SqlConnection(ConnStringSql))
+            {
+                using (SqlCommand cmd = con.CreateCommand())
+                {
+                    con.Open();
+                    //cmd.BindByName = true;
+                    cmd.CommandText = "select NAIM from dbo.SPRPODR where KOD=54200";
+                    //OracleParameter id = new OracleParameter("id", 54000);
+                    //cmd.Parameters.Add(id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        str_result += reader["NAIM"];
+                    }
+                    reader.Dispose();
+                }
+            }*/
+            ViewBag.strOra = str_result;
             return View();
         }
         

@@ -1,5 +1,10 @@
 
-            <svg xmlns="http://www.w3.org/2000/svg" width="526" height="233">
-                <rect x="13" y="14" width="500" height="200" rx="50" ry="100" fill="none" stroke="blue" stroke-width="10"></rect>
-            </svg>
-        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" onload="makeDraggable(evt)">
+            <rect x="0" y="0" width="400" height="300" fill="#eee"></rect>
+            <rect x="50" y="50" width="300" height="200" fill="#bbb"></rect>
+            <rect class="static" fill="#888" x="10" y="50" width="30" height="80"></rect>
+            <rect class="draggable" fill="#007bff" x="10" y="170" width="30" height="80" transform="translate(51.8919 -108.468)"></rect>
+            <ellipse class="draggable confine" fill="#ff00af" cx="250" cy="150" rx="30" ry="20" transform="translate(70 80)"></ellipse>
+            <text class="draggable confine" x="100" y="200" text-anchor="middle" font-size="5px" alignment-baseline="middle" transform="translate(49.3694 -81.0811)">Drag</text>
+        </svg>
+    

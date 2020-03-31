@@ -10,7 +10,7 @@ using GemBox.Document;
 using GemBox.Document.Tables;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
-
+using Microsoft.AspNetCore.Http;
 namespace Delineation.Controllers
 {
     public class D_ActController : Controller
@@ -23,7 +23,51 @@ namespace Delineation.Controllers
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
-
+        public IActionResult Upload(int? id )
+        {
+            if (id != null)
+            {
+                D_Act act = new D_Act() { Id = Convert.ToInt32(id) };
+                return View(act);
+            }
+            else
+            {
+                return View();
+            }
+        }
+        [HttpPost]
+        public ActionResult Upload(List<IFormFile> postedFiles, int? id)
+        {
+            string log = "";
+            string path = _webHostEnvironment.WebRootPath + "\\Output\\images\\";
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            List<string> uploadedFiles = new List<string>();
+            foreach (IFormFile postedFile in postedFiles)
+            {
+                string fileName1 = Path.GetFileName(postedFile.FileName);
+                string fileName = id + "." + fileName1.Split('.')[1];
+                using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                {
+                    log += Path.Combine(path, fileName) + "/";
+                    postedFile.CopyTo(stream);
+                    uploadedFiles.Add(fileName);
+                    ViewBag.Message += string.Format("<b>{0}</b>загружен.<br />", fileName1);
+                }
+            }
+            ViewBag.xx = log;
+            if (id != null)
+            {
+                D_Act act = new D_Act() { Id = Convert.ToInt32(id) };
+                return View(act);
+            }
+            else
+            {
+                return View();
+            }
+        }
         // GET: D_Act
         public async Task<IActionResult> Index()
         {
