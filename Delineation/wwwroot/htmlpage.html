@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script type="text/javascript">
+    function PutInJpeg() {
+                    //-------------------   svg   --------------------
+            var html_svg = document.querySelector("svg").parentNode.innerHTML;
+            var img_src = 'data:image/svg+xml;base64,' + btoa(html_svg);
+        document.getElementById("svg").value = encodeURIComponent(img_src)
+        console.log(img_src);
+            //------------------------------------------------
+            var myCanvas = document.querySelector("canvas");
+            myCanvas.setAttribute('width', 526);
+        myCanvas.setAttribute('height', 233);
+        console.log("begin<>" + myCanvas.toDataURL().substr(150,20));
+            var context = myCanvas.getContext("2d");
+            //------------------------------------------------
+            var image = new Image;
+        image.src = img_src;
+        image.onload = function () {
+                context.drawImage(image, 0, 0);
+                document.getElementById("png").value = encodeURIComponent(myCanvas.toDataURL()); //The default format type is image/png  ->  or 'image/jpeg'
+            console.log("func<>" + myCanvas.toDataURL().substr(150, 20));
+            document.getElementById("MyForm").submit();
+            }
+            //encodeURIComponent этот метод заменяет все символы, кроме:символов латинского алфавита, десятичных цифр и - _. ! ~ * ' ( ).
+            // !!!  иначе в строке myCanvas.toDataURL() при post передаче исчезнут все символы '+'
+            //myCanvas.parentNode.removeChild(myCanvas);
+        var myCanvas2 = document.querySelector("canvas");
+            console.log("final<>" + myCanvas2.toDataURL().substr(150,20));
+        document.getElementById("Label").innerText = document.getElementById("png").value;
+        alert("asd");
+    }
+    </script>
+    <div style="text-align:center">
+
+        <h1 class="display-4">Добро пожаловать!</h1>
+        <form id="MyForm"  action="htmlpage2.html" method="get">
+            <input type="hidden" id="png" name="png" />
+            <input type="hidden" id="svg" name="svg" />
+            <input type="submit" onclick="PutInJpeg(),alert('click'); return false;" value="Сохранить" />
+        </form>
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="526" height="233">
+                <rect x="13" y="14" width="500" height="200" rx="50" ry="100"
+                      fill="none" stroke="blue" stroke-width="10" />
+            </svg>
+        </div>
+        <div>
+            <canvas width="1" height="1"></canvas>
+        </div>
+        <label id="Label">mypics</label><br />
+        <img src="~/Temp/mypict.png" />
+        <script type="text/javascript">
+
+        </script>
+    </div>
+</body>
+</html>
