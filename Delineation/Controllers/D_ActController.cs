@@ -27,6 +27,7 @@ namespace Delineation.Controllers
         {
             if (id != null)
             {
+                //string path_jpeg = _webHostEnvironment.WebRootPath + "\\Output\\images\\" + id + ".jpeg";
                 D_Act act = new D_Act() { Id = Convert.ToInt32(id) };
                 return View(act);
             }
@@ -54,7 +55,7 @@ namespace Delineation.Controllers
                     log += Path.Combine(path, fileName) + "/";
                     postedFile.CopyTo(stream);
                     uploadedFiles.Add(fileName);
-                    ViewBag.Message += string.Format("<b>{0}</b>загружен.<br />", fileName1);
+                    ViewBag.Message += string.Format("<b>{0}</b> загружен.<br />", fileName1);
                 }
             }
             ViewBag.xx = log;
