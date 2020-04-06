@@ -1,0 +1,7 @@
+
+        <svg class="MySvg" xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" onload="makeDraggable(evt)">
+                
+            <rect class="draggable" x="183.2214765100671" y="51.191275167785236" width="41.275167785234885" height="42.28187919463086"></rect>
+            <rect class="draggable" x="49" y="50.449999999999996" width="43" height="42.99999999999999" stroke-width="2" stroke="red" fill="none"></rect><rect class="draggable" x="850.4" y="541.05" width="44" height="43" stroke-width="2" stroke="red" fill="none"></rect><text class="draggable top" x="30" y="30" text-anchor="start" style="font-size:25px" alignment-baseline="middle">ПС Пинск-220</text>
+        </svg>
+    

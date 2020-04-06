@@ -8,7 +8,7 @@
 
 <h4>Акт</h4>
 <hr />
-<a asp-action="Upload" asp-route-id="@Model.Id">Загрузить файл</a>
+<a asp-action="Drawing" asp-route-id="@Model.Id">редактировать схему разграничения</a>
 <table style="width:100%">
     <tr>
         <td></td>
@@ -80,71 +80,89 @@
         </td>
         <td style="width:50%; vertical-align:top">
             <dl>
-                <dt >
+                <dt>
                     @Html.DisplayNameFor(model => model.Tc.Num)
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Tc.Num)
                 </dd>
-                <dt >
+                <dt>
                     @Html.DisplayNameFor(model => model.Tc.Date)
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Tc.Date)
                 </dd>
-                <dt >
+                <dt>
                     @Html.DisplayNameFor(model => model.Tc.Res)
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Tc.Res.Name)
                 </dd>
-                <dt >
+                <dt>
                     @Html.DisplayNameFor(model => model.Tc.Company)
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Tc.Company)
                 </dd>
-                <dt >
+                <dt>
                     @Html.DisplayNameFor(model => model.Tc.FIO)
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Tc.FIO)
                 </dd>
-                <dt >
+                <dt>
                     @Html.DisplayNameFor(model => model.Tc.ObjName)
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Tc.ObjName)
                 </dd>
-                <dt >
+                <dt>
                     @Html.DisplayNameFor(model => model.Tc.Address)
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Tc.Address)
                 </dd>
-                <dt >
+                <dt>
                     @Html.DisplayNameFor(model => model.Tc.Pow)
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Tc.Pow)
                 </dd>
-                <dt >
+                <dt>
                     @Html.DisplayNameFor(model => model.Tc.Category)
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Tc.Category)
                 </dd>
-                <dt >
-                    @Html.DisplayNameFor(model => model.Tc.Point)
+                <dt>
+                    @Html.DisplayNameFor(model => model.Tc.Category2)
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Tc.Point)
+                    @Html.DisplayFor(model => model.Tc.Category2)
                 </dd>
-                <dt >
-                    @Html.DisplayNameFor(model => model.Tc.InvNum)
+                <dt>
+                    @Html.DisplayNameFor(model => model.Tc.PS) (@Html.DisplayNameFor(model => model.Tc.PSInvNum))
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Tc.InvNum)
+                    @Html.DisplayFor(model => model.Tc.PS) (@Html.DisplayFor(model => model.Tc.PSInvNum))
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Tc.Line10) (@Html.DisplayNameFor(model => model.Tc.Line10InvNum))
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Tc.Line10) (@Html.DisplayFor(model => model.Tc.Line10InvNum))
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Tc.TP) (@Html.DisplayNameFor(model => model.Tc.TPInvNum))
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Tc.TP) (@Html.DisplayFor(model => model.Tc.TPInvNum))
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Tc.Line04) (@Html.DisplayNameFor(model => model.Tc.Line04InvNum))
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Tc.Line04) (@Html.DisplayFor(model => model.Tc.Line04InvNum))
                 </dd>
             </dl>
         </td>

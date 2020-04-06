@@ -16,7 +16,7 @@ namespace Delineation.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
-        [Display(Name ="РЭС")]
+        [Display(Name = "РЭС")]
         public string Name { get; set; }
 
         public D_Person Nach { get; set; }
@@ -36,7 +36,7 @@ namespace Delineation.Models
         public string City { get; set; }
 
         [Display(Name = "РЭСа"), Column(TypeName = "nvarchar(30)"), StringLength(30)]
-        public string  RESa{ get; set; }
+        public string RESa { get; set; }
 
         [Display(Name = "РЭСом"), Column(TypeName = "nvarchar(30)"), StringLength(30)]
         public string RESom { get; set; }
@@ -50,13 +50,13 @@ namespace Delineation.Models
     public class D_Person
     {
         public int Id { get; set; }
-        [Display(Name ="Фамилия"), Column(TypeName = "nvarchar(70)"), StringLength(70)]        
+        [Display(Name = "Фамилия"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
         public string Surname { get; set; }
 
-        [Display(Name="Имя"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
+        [Display(Name = "Имя"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
         public string Name { get; set; }
 
-        [Display(Name="Отчество"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
+        [Display(Name = "Отчество"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
         public string Patronymic { get; set; }
 
         [NotMapped]
@@ -64,13 +64,14 @@ namespace Delineation.Models
     }
     public class D_Tc
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         [Display(Name = "№ ТУ")]
         [Column(TypeName = "nvarchar(20)"), StringLength(20)]
         public string Num { get; set; }
 
-        [Display(Name = "Дата выдачи"),DataType(DataType.Date)]
+        [Display(Name = "Дата выдачи"), DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
         [Display(Name = "РЭС")]
@@ -78,31 +79,55 @@ namespace Delineation.Models
         [Display(Name = "РЭС")]
         public int? ResId { get; set; }
 
-        [Display(Name ="Наименование организации"), Column(TypeName = "nvarchar(150)"), StringLength(150)]
+        [Display(Name = "Наименование организации"), Column(TypeName = "nvarchar(150)"), StringLength(150)]
         public string Company { get; set; }
 
         [Display(Name = "ФИО заявителя"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
         public string FIO { get; set; }
 
-        [Display(Name ="Наименование объекта"), Column(TypeName = "nvarchar(150)"), StringLength(150)]
+        [Display(Name = "Наименование объекта"), Column(TypeName = "nvarchar(150)"), StringLength(150)]
         public string ObjName { get; set; }
 
         [Display(Name = "Адрес объекта строительства"), Column(TypeName = "nvarchar(200)"), StringLength(200)]
         public string Address { get; set; }
 
-        [Display(Name = "Разрешенная мощность, кВт."),Column(TypeName ="nvarchar(7)"),StringLength(7,ErrorMessage ="допустимая длинна - 7 символов")]
+        [Display(Name = "Разрешенная мощность, кВт."), Column(TypeName = "nvarchar(7)"), StringLength(7, ErrorMessage = "допустимая длинна - 7 символов")]
         public string Pow { get; set; }
-
-        [Display(Name = "Категория")]
+        
+        [Display(Name = "Категория по надежн. эл. снабжен. эл. установок потребителя")]
         public int Category { get; set; }
 
-        [Display(Name = "Точка подключения"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
-        public string Point { get; set; }
+        [Display(Name = "Категория по надежн. эл. снабжен. внешней схемы")]
+        public int Category2 { get; set; }
 
-        [Display(Name = "Инв. №")]
-        public int InvNum { get; set; }
+        [Display(Name = "Название ПС"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
+        public string PS { get; set; }
 
-        [Display(Name ="Опора"), Column(TypeName = "nvarchar(10)"), StringLength(10)]
+        [Display(Name = "Инвентарный №")]
+        public int PSInvNum { get; set; }
+
+        [Display(Name = "Линия 10кВ"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
+        public string Line10 { get; set; }
+
+        [Display(Name = "Инвентарный №")]
+        public int Line10InvNum { get; set; }
+
+        [Display(Name = "Название ТП"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
+        public string TP { get; set; }
+
+        [Display(Name = "диспетчерский № ТП")]
+        public int TPnum { get; set; }
+
+        [Display(Name = "Инвентарный №")]
+        public int TPInvNum { get; set; }
+
+        [Display(Name = "Линия 0,4кВ"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
+        public string Line04 { get; set; }
+
+        [Display(Name = "Инвентарный №")]
+        public int Line04InvNum { get; set; }
+
+        [Display(Name = "Опора"), Column(TypeName = "nvarchar(10)"), StringLength(10)]
         public string Pillar { get; set; }
     }
     public class D_Act
@@ -113,7 +138,7 @@ namespace Delineation.Models
         public DateTime Date { get; set; }
 
         public D_Tc Tc { get; set; }
-        [Display(Name ="ТУ")]
+        [Display(Name = "ТУ")]
         public int? TcId { get; set; }
 
         [Display(Name = "юр. лицо")]
@@ -144,13 +169,13 @@ namespace Delineation.Models
         public string Validity { get; set; }
 
     }
-    public class DelineationContext: DbContext 
+    public class DelineationContext : DbContext
     {
         public DbSet<D_Res> D_Reses { get; set; }
         public DbSet<D_Person> D_Persons { get; set; }
         public DbSet<D_Tc> D_Tces { get; set; }
         public DbSet<D_Act> d_Acts { get; set; }
-        public DelineationContext( DbContextOptions<DelineationContext> options): base(options)
+        public DelineationContext(DbContextOptions<DelineationContext> options) : base(options)
         {
             //Database.EnsureCreated();
         }
@@ -171,12 +196,12 @@ namespace Delineation.Models
             modelBuilder.Entity<D_Res>().HasData(
                 new D_Res[]
                 {
-                    new D_Res{ Id=54100, Name="Пинский Городской", BuhId=5, GlInzhId=3, NachId=2, ZamNachId=4, City="Пинск", RESa="Пинского Городского", RESom="Пинским Городским", FIOnachRod="Булавина Виталия Федоровича", Dover="от 01.09.2019 №2432"},
-                    new D_Res{ Id=54200, Name="Пинский Сельский", BuhId=9, GlInzhId=8, NachId=6, ZamNachId=7, City="Пинск", RESa="Пинсого Сельского", RESom="Пинским Сельским", FIOnachRod="Забавнюка Владимира Францевича", Dover="от 01.09.2019 №2432"},
-                    new D_Res{ Id=54300, Name="Лунинецкий", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
-                    new D_Res{ Id=54400, Name="Столинский", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
-                    new D_Res{ Id=54500, Name="Ивановский", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
-                    new D_Res{ Id=54600, Name="Дрогичинский", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1}
+                    new D_Res{ Id=541000, Name="Пинский Городской", BuhId=5, GlInzhId=3, NachId=2, ZamNachId=4, City="Пинск", RESa="Пинского Городского", RESom="Пинским Городским", FIOnachRod="Булавина Виталия Федоровича", Dover="от 01.09.2019 №2432"},
+                    new D_Res{ Id=542000, Name="Пинский Сельский", BuhId=9, GlInzhId=8, NachId=6, ZamNachId=7, City="Пинск", RESa="Пинсого Сельского", RESom="Пинским Сельским", FIOnachRod="Забавнюка Владимира Францевича", Dover="от 01.09.2019 №2432"},
+                    new D_Res{ Id=543000, Name="Лунинецкий", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
+                    new D_Res{ Id=544000, Name="Столинский", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
+                    new D_Res{ Id=545000, Name="Ивановский", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1},
+                    new D_Res{ Id=546000, Name="Дрогичинский", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1}
                 });
             modelBuilder.Entity<D_Act>().Property(p => p.Date).HasDefaultValueSql("GETDATE()");
             base.OnModelCreating(modelBuilder);
@@ -215,5 +240,10 @@ namespace Delineation.Models
             }
         }
         public DbSet<Delineation.Models.D_Act> D_Act { get; set; }
+    }
+    [NotMapped]
+    public class SelList{
+        public string Id { get; set; }
+        public string Text { get; set; }
     }
 }

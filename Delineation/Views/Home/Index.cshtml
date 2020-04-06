@@ -16,10 +16,13 @@
     function PutInJpeg() {
         //-------------------   svg   --------------------
         var html_svg = document.querySelector("svg").parentNode.innerHTML;
-        var img_src = 'data:image/svg+xml;base64,' + btoa(html_svg);
+        alert(html_svg);
+        var img_src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(html_svg)));
+        alert(img_src);
         document.getElementById("svg").value = encodeURIComponent(img_src)
         //------------------------------------------------
         var myCanvas = document.querySelector("canvas");
+        alert("1");
         myCanvas.setAttribute('width', 3000);
         myCanvas.setAttribute('height', 2000);
         var context = myCanvas.getContext("2d");
@@ -28,11 +31,17 @@
         image.src = img_src;
         /*image.width = 300;
         image.height = 200;*/
+        alert("2");
         image.onload = function () {
+            alert("3");
             context.drawImage(image, 0, 0);
+            alert("4");
             var myCanvas = document.querySelector("canvas");
+            alert("5");
             document.getElementById("png").value = encodeURIComponent(myCanvas.toDataURL()); //The default format type is image/png  ->  or 'image/jpeg'
+            alert("6");
             myCanvas.parentNode.removeChild(myCanvas);
+            alert("before_Submit");
             document.getElementById("MyForm").submit();
             //document.getElementById("Label").innerText = document.getElementById("png").value;
         }
@@ -138,7 +147,7 @@
             <rect class="static" fill="#888" x="10" y="50" width="30" height="80" />
             <rect class="draggable" fill="#007bff" x="10" y="170" width="30" height="80" />
             <ellipse class="draggable confine" fill="#ff00af" cx="250" cy="150" rx="30" ry="20"  />
-            <text class="draggable confine" x="100" y="100" text-anchor="middle" font-size="5px" alignment-baseline="middle">Drag</text>
+            <text class="draggable confine" x="100" y="100" text-anchor="middle" font-size="5px" alignment-baseline="middle">Тащить</text>
         </svg>
     </div>
     <div>
@@ -146,7 +155,4 @@
     </div>
     <!--<label id="Label"></label><br />
     <img src="~/Temp/mypict.png" />-->
-    <script type="text/javascript">
-
-    </script>
 </div>

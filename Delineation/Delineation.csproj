@@ -5,23 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200317070426_data.cs" />
-    <Compile Remove="Migrations\20200317070426_data.Designer.cs" />
-    <Compile Remove="Migrations\20200317174749_act.cs" />
-    <Compile Remove="Migrations\20200317174749_act.Designer.cs" />
-    <Compile Remove="Migrations\20200317180125_act.cs" />
-    <Compile Remove="Migrations\20200317180125_act.Designer.cs" />
-    <Compile Remove="Migrations\20200317180931_act.cs" />
-    <Compile Remove="Migrations\20200317180931_act.Designer.cs" />
-    <Compile Remove="Migrations\20200318065235_act.cs" />
-    <Compile Remove="Migrations\20200318065235_act.Designer.cs" />
-    <Compile Remove="Migrations\20200318070333_act2.cs" />
-    <Compile Remove="Migrations\20200318070333_act2.Designer.cs" />
-    <Compile Remove="Migrations\20200331183506_april.cs" />
-    <Compile Remove="Migrations\20200331183506_april.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
   </ItemGroup>
   

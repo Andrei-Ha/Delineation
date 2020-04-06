@@ -11,25 +11,38 @@ using GemBox.Document.Tables;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
+using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
+using System.Net;
+
 namespace Delineation.Controllers
 {
     public class D_ActController : Controller
     {
         private readonly DelineationContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private string ConnStringOracle = "Data Source=//10.181.64.7/orcl7;User Id = sel;Password=2222";
+        private string ConnStringSql = "Server=Pirr2n; database=pinskbase; User Id = ppinsk; Password=pes";
 
         public D_ActController(DelineationContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
-        public IActionResult Upload(int? id )
+        public async Task<IActionResult> Drawing(int? id )
         {
             if (id != null)
             {
-                //string path_jpeg = _webHostEnvironment.WebRootPath + "\\Output\\images\\" + id + ".jpeg";
-                D_Act act = new D_Act() { Id = Convert.ToInt32(id) };
-                return View(act);
+                string path = _webHostEnvironment.WebRootPath + "\\Output\\images\\";
+                DirectoryInfo dir_image = new DirectoryInfo(path);
+                List<FileInfo> list_files = dir_image.EnumerateFiles().Where(p => p.Name.Split('.')[0] == id.ToString()).ToList();
+                foreach (FileInfo fileInfo in list_files)
+                {
+                    if (fileInfo.Exists) ViewBag.FileName = fileInfo.Name;
+                }
+                D_Act d_Act = await _context.d_Acts.Include(p => p.Tc).FirstOrDefaultAsync(o => o.Id == id);
+                return View(d_Act);
             }
             else
             {
@@ -37,37 +50,81 @@ namespace Delineation.Controllers
             }
         }
         [HttpPost]
-        public ActionResult Upload(List<IFormFile> postedFiles, int? id)
+        public async Task<IActionResult>  Drawing(List<IFormFile> postedFiles, int id, int del)
         {
             string log = "";
             string path = _webHostEnvironment.WebRootPath + "\\Output\\images\\";
-            if (!Directory.Exists(path))
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            if (del == 0)
             {
-                Directory.CreateDirectory(path);
-            }
-            List<string> uploadedFiles = new List<string>();
-            foreach (IFormFile postedFile in postedFiles)
-            {
-                string fileName1 = Path.GetFileName(postedFile.FileName);
-                string fileName = id + "." + fileName1.Split('.')[1];
-                using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                foreach (IFormFile postedFile in postedFiles)
                 {
-                    log += Path.Combine(path, fileName) + "/";
-                    postedFile.CopyTo(stream);
-                    uploadedFiles.Add(fileName);
-                    ViewBag.Message += string.Format("<b>{0}</b> загружен.<br />", fileName1);
+                    string fileName1 = Path.GetFileName(postedFile.FileName);
+                    string ext = fileName1.Split('.')[1];
+                    string fileName = id + "." + ext;
+                    var allowedExt = new[] { "png", "jpg", "jpeg" };
+                    if (allowedExt.Any(p => p == ext.ToLower())) // проверка расширения
+                    {
+                        using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                        {
+                            DeleteAllImageById(id,ext);
+                            log += Path.Combine(path, fileName) + "/";
+                            postedFile.CopyTo(stream);
+                            ViewBag.FileName = fileName;
+                            ViewBag.Message += string.Format("<b>{0}</b> загружен.<br />", fileName1);
+                        }
+                    }
                 }
-            }
-            ViewBag.xx = log;
-            if (id != null)
-            {
-                D_Act act = new D_Act() { Id = Convert.ToInt32(id) };
-                return View(act);
+                ViewBag.xx = log;
             }
             else
             {
-                return View();
+                DeleteAllImageById(id,"");
+            }            
+            D_Act d_Act = await _context.d_Acts.Include(p => p.Tc).FirstOrDefaultAsync(o => o.Id == id);
+            return View(d_Act);
+        }
+        private void DeleteAllImageById(int id,string ext)
+        {
+            string path = _webHostEnvironment.WebRootPath + "\\Output\\images\\";
+            DirectoryInfo dir_image = new DirectoryInfo(path);
+            List<FileInfo> list_files = dir_image.EnumerateFiles().Where(p => p.Name.Split('.')[0] == id.ToString() && p.Name.Split('.')[1]!= ext).ToList();
+            foreach (FileInfo fileInfo in list_files)
+            {
+                if (fileInfo.Exists) fileInfo.Delete();
             }
+            //List<string> list_ext0 = new List<string>( new string[] { "png", "jpg", "jpeg" });
+            //List<string> list_ext = new List<string> { ".png", ".jpg", ".jpeg" };
+        }
+        [HttpPost]
+        public IActionResult SavePNG(string png, string svg, int id)
+        {
+            var decodeURL_svg = WebUtility.UrlDecode(svg);
+            var base64Data_svg = decodeURL_svg.Split(',');
+            string path_svg = _webHostEnvironment.WebRootPath + "\\Output\\svg\\"+id.ToString()+".svg";
+            using (FileStream fs = new FileStream(path_svg, FileMode.Create))
+            {
+                using (BinaryWriter bw = new BinaryWriter(fs))
+                {
+                    byte[] data = Convert.FromBase64String(base64Data_svg[1]);
+                    bw.Write(data);
+                }
+            }
+            //---
+            var decodeURL_png = WebUtility.UrlDecode(png);
+            var base64Data_png = decodeURL_png.Split(',');
+            string path_png = _webHostEnvironment.WebRootPath + "\\Output\\png\\" + id.ToString() + ".png";
+            using (FileStream fs = new FileStream(path_png, FileMode.Create))
+            {
+                using (BinaryWriter bw = new BinaryWriter(fs))
+                {
+                    byte[] data = Convert.FromBase64String(base64Data_png[1]);
+                    bw.Write(data);
+                }
+            }
+            //---
+            D_Act d_Act = _context.d_Acts.Include(p => p.Tc).FirstOrDefault(o => o.Id == id);
+            return RedirectToAction(nameof(Drawing),d_Act);
         }
         // GET: D_Act
         public async Task<IActionResult> Index()
@@ -98,17 +155,108 @@ namespace Delineation.Controllers
         // GET: D_Act/Create
         public IActionResult Create()
         {
-            ViewData["TcId"] = new SelectList(_context.D_Tces.OrderBy(p=>p.Date).Select(p=>new { Id = p.Id, text = "№" + p.Num + " от " + p.Date.ToString("dd.MM.yyyy") + "; " + p.FIO + "; " + p.Address }), "Id", "text");
+            List<SelList> myList = new List<SelList>();
+            using (SqlConnection con = new SqlConnection(ConnStringSql))
+            {
+                using (SqlCommand cmd = con.CreateCommand())
+                {
+                    con.Open();
+                    cmd.CommandText = "select kluch,n_tu,CONVERT(VARCHAR(10),d_tu,104) s2,fio,adress_ob from dbo.tu_all Where n_tu is not null and d_tu is not null";
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        myList.Add(new SelList() { Id = reader["kluch"].ToString(), Text = "№" + reader["n_tu"].ToString() + " от " + reader["s2"].ToString() + "; " + reader["fio"].ToString() + "; " + reader["adress_ob"].ToString() });
+                    }
+                    reader.Dispose();
+                }
+            }
+            ViewData["TcId"] = new SelectList(myList, "Id", "Text");
+            //ViewData["TcId"] = new SelectList(_context.D_Tces.OrderBy(p => p.Date).Select(p => new { Id = p.Id, text = "№" + p.Num + " от " + p.Date.ToString("dd.MM.yyyy") + "; " + p.FIO + "; " + p.Address }), "Id", "text");
             return View();
         }
 
-        // POST: D_Act/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int TcId)
         {
+            string str_numTP = "";
+            D_Tc tc = new D_Tc();
+            using (SqlConnection con = new SqlConnection(ConnStringSql))
+            {
+                using (SqlCommand cmd = con.CreateCommand())
+                {
+                    con.Open();
+                    cmd.CommandText = "select kluch,n_tu, d_tu,kod_podr,fio,name_ob,adress_ob,p_all,name_ps,n_tp,n_vl,typ_vl,n_op from dbo.tu_all where kluch=" + TcId.ToString();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        tc.Id =Convert.ToInt32(reader["kluch"]);
+                        tc.Num = reader["n_tu"].ToString();
+                        if(reader["d_tu"].ToString().Length >= 10) tc.Date = DateTime.Parse(reader["d_tu"].ToString());
+                        tc.ResId = Convert.ToInt32(reader["kod_podr"]);
+                        tc.FIO = reader["fio"].ToString();
+                        tc.ObjName = reader["name_ob"].ToString();
+                        tc.Address = reader["adress_ob"].ToString();
+                        tc.Pow = reader["p_all"].ToString();
+                        tc.PS = reader["name_ps"].ToString();
+                        tc.TPnum = Convert.ToInt32(reader["n_tp"]);
+                        tc.Line04 = reader["typ_vl"].ToString() + " " + reader["n_vl"].ToString();
+                        tc.Pillar = reader["n_op"].ToString();
+                        str_numTP = reader["n_tp"].ToString();
+                    }
+                    reader.Dispose();
+                }
+            }
+            if (str_numTP != "") // обращение к базе Диполя
+            {
+                string path_vsd = _webHostEnvironment.WebRootPath + "\\Output\\vsd\\" + str_numTP + ".vsd";
+                using (OracleConnection con = new OracleConnection(ConnStringOracle))
+                {
+                    string doc_code = "";
+                    using (OracleCommand cmd = con.CreateCommand())
+                    {
+                        con.Open();
+                        cmd.CommandText = "select TP_NUM, doc_code from TP where substr(doc_code,TO_NUMBER(INSTR(doc_code,'-',1,2))+1)=" + str_numTP;
+                        OracleDataReader MyReader = cmd.ExecuteReader();
+                        using (MyReader)
+                        {
+                            while (MyReader.Read())
+                            {
+                                tc.TP = MyReader["TP_NUM"].ToString();
+                                doc_code = MyReader["doc_code"].ToString();
+                            }
+                        }
+                        cmd.CommandText = "select INV_NUMB from TP_INV_NUMB where doc_code='" + doc_code + "'";
+                        MyReader = cmd.ExecuteReader();
+                        using (MyReader)
+                        {
+                            while (MyReader.Read())
+                            {
+                                tc.TPInvNum = Convert.ToInt32(MyReader["inv_numb"]);
+                            }
+                        }
+                        FileInfo file_vsd = new FileInfo(path_vsd);
+                        if (!file_vsd.Exists)
+                        {
+                            cmd.CommandText = "select PFILE, DOC_CODE from TP_SHEM WHERE DOC_CODE='" + doc_code + "'";
+                            OracleDataReader MyReaderB = cmd.ExecuteReader();
+                            using (MyReaderB)
+                            {
+                                while (MyReaderB.Read())
+                                {
+                                    OracleBinary oracleBinary = MyReaderB.GetOracleBinary(0);
+                                    using (FileStream fstream = new FileStream(path_vsd, FileMode.OpenOrCreate))
+                                    {
+                                        byte[] array = (byte[])oracleBinary;
+                                        fstream.Write(array, 0, array.Length);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            _context.D_Tces.Add(tc);
             _context.d_Acts.Add(new D_Act { TcId = TcId });
             _context.SaveChanges();
             List<D_Act> list = _context.D_Act.ToList();
@@ -194,8 +342,10 @@ namespace Delineation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var d_Act = await _context.d_Acts.FindAsync(id);
+            D_Act d_Act = await _context.d_Acts.FindAsync(id);
+            D_Tc d_Tc = await _context.D_Tces.FindAsync(d_Act.TcId);
             _context.d_Acts.Remove(d_Act);
+            _context.D_Tces.Remove(d_Tc);
             await _context.SaveChangesAsync();
             //
             string webRootPath = _webHostEnvironment.WebRootPath;
@@ -247,9 +397,9 @@ namespace Delineation.Controllers
                     str_Address = "<" + act.Tc.Address + ">",
                     str_Pow = "<" + act.Tc.Pow + ">",
                     str_Category = "<" + act.Tc.Category.ToString() + ">",
-                    str_Point = "<" + act.Tc.Point + ">",
+                    str_Point = "<" + act.Tc.TP + ">",
                     str_Pillar = "<" + act.Tc.Pillar + ">",
-                    str_InvNum = "<" + act.Tc.InvNum.ToString() + ">",
+                    str_InvNum = "<" + act.Tc.TP + ">",
                     str_ConsBalance = "<" + act.ConsBalance + ">",
                     str_DevBalance = "<" + act.DevBalance + ">",
                     str_ConsExpl = "<" + act.ConsExpl + ">",
@@ -261,7 +411,8 @@ namespace Delineation.Controllers
                     str_GlInzh = "<" + act.Tc.Res.GlInzh.Surname + " " + act.Tc.Res.GlInzh.Name.Substring(0, 1) + "." + act.Tc.Res.GlInzh.Patronymic.Substring(0, 1) + "." + ">",
                     str_Buh = "<" + act.Tc.Res.Buh.Surname + " " + act.Tc.Res.Buh.Name.Substring(0, 1) + "." + act.Tc.Res.Buh.Patronymic.Substring(0, 1) + "." + ">";
             string[] arrCons = str_FIOcons.Split(' ');
-            string str_Cons = "<" + arrCons[0] + " " + arrCons[1]?.Substring(0, 1) + "." + arrCons[2]?.Substring(0, 1) + "." + ">";
+            string str_Cons = "";
+            if (arrCons.Length>=3) str_Cons = "<" + arrCons[0] + " " + arrCons[1]?.Substring(0, 1) + "." + arrCons[2]?.Substring(0, 1) + "." + ">";
             ComponentInfo.SetLicense("FREE-LIMITED-KEY");
             string contentRootPath = _webHostEnvironment.ContentRootPath;
             string webRootPath = _webHostEnvironment.WebRootPath;

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Delineation.Migrations
 {
     [DbContext(typeof(DelineationContext))]
-    [Migration("20200319063521_dopres")]
-    partial class dopres
+    [Migration("20200404104021_inv")]
+    partial class inv
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -221,66 +221,66 @@ namespace Delineation.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 54100,
+                            Id = 541000,
                             BuhId = 5,
                             City = "Пинск",
                             Dover = "от 01.09.2019 №2432",
-                            FIOnachRod = "Булавина В.Ф.",
+                            FIOnachRod = "Булавина Виталия Федоровича",
                             GlInzhId = 3,
                             NachId = 2,
-                            Name = "Пинский Городской РЭС",
+                            Name = "Пинский Городской",
                             RESa = "Пинского Городского",
                             RESom = "Пинским Городским",
                             ZamNachId = 4
                         },
                         new
                         {
-                            Id = 54200,
+                            Id = 542000,
                             BuhId = 9,
                             City = "Пинск",
                             Dover = "от 01.09.2019 №2432",
-                            FIOnachRod = "Забавнюка В.Ф.",
+                            FIOnachRod = "Забавнюка Владимира Францевича",
                             GlInzhId = 8,
                             NachId = 6,
-                            Name = "Пинский Сельский РЭС",
+                            Name = "Пинский Сельский",
                             RESa = "Пинсого Сельского",
                             RESom = "Пинским Сельским",
                             ZamNachId = 7
                         },
                         new
                         {
-                            Id = 54300,
+                            Id = 543000,
                             BuhId = 1,
                             GlInzhId = 1,
                             NachId = 1,
-                            Name = "Лунинецкий РЭС",
+                            Name = "Лунинецкий",
                             ZamNachId = 1
                         },
                         new
                         {
-                            Id = 54400,
+                            Id = 544000,
                             BuhId = 1,
                             GlInzhId = 1,
                             NachId = 1,
-                            Name = "Столинский РЭС",
+                            Name = "Столинский",
                             ZamNachId = 1
                         },
                         new
                         {
-                            Id = 54500,
+                            Id = 545000,
                             BuhId = 1,
                             GlInzhId = 1,
                             NachId = 1,
-                            Name = "Ивановский РЭС",
+                            Name = "Ивановский",
                             ZamNachId = 1
                         },
                         new
                         {
-                            Id = 54600,
+                            Id = 546000,
                             BuhId = 1,
                             GlInzhId = 1,
                             NachId = 1,
-                            Name = "Дрогичинский РЭС",
+                            Name = "Дрогичинский",
                             ZamNachId = 1
                         });
                 });
@@ -288,15 +288,16 @@ namespace Delineation.Migrations
             modelBuilder.Entity("Delineation.Models.D_Tc", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(200)")
                         .HasMaxLength(200);
 
                     b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Category2")
                         .HasColumnType("int");
 
                     b.Property<string>("Company")
@@ -310,7 +311,18 @@ namespace Delineation.Migrations
                         .HasColumnType("nvarchar(70)")
                         .HasMaxLength(70);
 
-                    b.Property<int>("InvNum")
+                    b.Property<string>("Line04")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Line04InvNum")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Line10")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Line10InvNum")
                         .HasColumnType("int");
 
                     b.Property<string>("Num")
@@ -321,18 +333,32 @@ namespace Delineation.Migrations
                         .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
-                    b.Property<int>("Pillar")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Point")
+                    b.Property<string>("PS")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<int>("PSInvNum")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Pillar")
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
 
                     b.Property<string>("Pow")
                         .HasColumnType("nvarchar(7)")
                         .HasMaxLength(7);
 
                     b.Property<int?>("ResId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TP")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("TPInvNum")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TPnum")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
