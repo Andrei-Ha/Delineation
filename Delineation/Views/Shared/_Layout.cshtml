@@ -6,6 +6,8 @@
     <title>@ViewData["Title"] - Разграничения</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <header>
@@ -30,18 +32,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="D_Act" asp-action="Index">Акты</a>
                         </li>
-                        <li class="nav-item">
+                        @*<li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="D_Tc" asp-action="Index">ТУ</a>
-                        </li>
+                        </li>*@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="D_Res" asp-action="Index">Подразделения</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="D_Person" asp-action="Index">Персонал</a>
                         </li>
-                        <li class="nav-item">
+                        @*<li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Oracle</a>
-                        </li>
+                        </li>*@
                     </ul>
                 </div>
             </div>
@@ -58,8 +60,7 @@
             &copy; 2020 - сл. АСУ филиала "Пинские электрические сети" РУП "Брестэнерго" <!-- - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> -->
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>

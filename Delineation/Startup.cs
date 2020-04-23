@@ -25,9 +25,9 @@ namespace Delineation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connString = Configuration.GetConnectionString("DefaultConnection");
+            //string connString = Configuration.GetConnectionString("DefaultConnection");
             //string connString = Configuration.GetConnectionString("ConnectionAndr-SQL");
-            //string connString = Configuration.GetConnectionString("ConnectionPirr2n");
+            string connString = Configuration.GetConnectionString("ConnectionPirr2n");
             services.AddDbContext<DelineationContext>(options => options.UseSqlServer(connString));
             services.AddControllersWithViews();
         }
@@ -35,7 +35,7 @@ namespace Delineation
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            /*if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -44,7 +44,8 @@ namespace Delineation
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-            }
+            }*/
+            app.UseDeveloperExceptionPage();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -56,7 +57,7 @@ namespace Delineation
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=D_act}/{action=drawing}/{id=15}");
+                    pattern: "{controller=D_Act}/{action=Index}/{id?}");
             });
         }
     }

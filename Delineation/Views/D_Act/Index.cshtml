@@ -58,8 +58,11 @@
                 @Html.DisplayFor(model => item.Tc.Address)
             </td>
             <td>
-                @{ string link = "../Output/pdf/" + item.Id + ".pdf";}
-                <a href="@link" rel="noopener noreferrer" target="_blank">акт</a>
+                @if (((List<string>)ViewBag.fileNames).Any(p => p == item.Id.ToString()))
+                {
+                    string link = "../Output/pdf/" + item.Id + ".pdf";
+                    <a href="@link" rel="noopener noreferrer" target="_blank">акт</a>
+                }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">изменить</a>   <br />

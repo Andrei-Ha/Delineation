@@ -61,6 +61,9 @@ namespace Delineation.Migrations
                     b.Property<bool>("IsTransit")
                         .HasColumnType("bit");
 
+                    b.Property<string>("StrPSline10")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("TcId")
                         .HasColumnType("int");
 
@@ -289,18 +292,20 @@ namespace Delineation.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(5)")
+                        .HasMaxLength(5);
 
-                    b.Property<int>("Category2")
-                        .HasColumnType("int");
+                    b.Property<string>("Category2")
+                        .HasColumnType("nvarchar(5)")
+                        .HasMaxLength(5);
 
                     b.Property<string>("Company")
-                        .HasColumnType("nvarchar(150)")
-                        .HasMaxLength(150);
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -328,8 +333,8 @@ namespace Delineation.Migrations
                         .HasMaxLength(20);
 
                     b.Property<string>("ObjName")
-                        .HasColumnType("nvarchar(150)")
-                        .HasMaxLength(150);
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
 
                     b.Property<string>("PS")
                         .HasColumnType("nvarchar(50)")

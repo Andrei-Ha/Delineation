@@ -1,0 +1,11 @@
+
+                <svg id="MySvg" style="display:inline-block" class="MySvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" onload="makeDraggable(evt)">
+                    <line id="nachalo" class="bottom"></line>
+                        <line class="draggable" x1="505.23952095808386" y1="276.6467065868264" x2="661.5269461077845" y2="276.6467065868264" stroke-width="1" stroke="black"></line><line class="draggable" x1="660.6287425149701" y1="274.8502994011976" x2="660.6287425149701" y2="115.8682634730539" stroke-width="1" stroke="black"></line><line class="draggable" x1="594.1616766467066" y1="118.562874251497" x2="660.6287425149701" y2="118.562874251497" stroke-width="1" stroke="black"></line><circle class="draggable" cx="658.8323353293414" cy="272.1556886227545" r="6.477038219396299" transform="translate(2.69461 1.79641)"></circle><circle class="draggable" cx="660.6287425149701" cy="118.562874251497" r="7.674254861063662" transform="translate(-0.898204 1.79641)"></circle><rect class="draggable" x="426.1976047904192" y="47.60479041916168" width="294.61077844311376" height="366.4670658682635" stroke-width="1" stroke="black" fill="none"></rect><text class="draggable top" x="0" y="0" transform="translate(27.3054 22.8144)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ПС СЕЛИЩЕ-110</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(35.988 44.0719)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ВЛ 10кВ №372</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(193.772 113.832)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ТП-356 (МТП-356 Парохонск)</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(390.18 168.323)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ВЛ 1</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(363.832 281.198)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">1/5</text>
+                    <rect id="konec" class="top" x="0" y="0" width="900" height="600" stroke="black" stroke-width="2" fill="none"></rect>
+                </svg>
+            

@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Начальная";
 }
-    <style type="text/css">
+    @*<style type="text/css">
         .static {
             cursor: not-allowed;
         }
@@ -132,10 +132,10 @@
             selectedElement = false;
         }
     }
-</script>
+</script>*@
 <div class="text-center">
     <h1 class="display-4">Добро пожаловать!</h1>
-    <form id="MyForm" asp-action="SavePNG" method="post">
+    @*<form id="MyForm" asp-action="SavePNG" method="post">
         <input type="hidden" id="png" name="png" />
         <input type="hidden" id="svg" name="svg" />
         <input type="submit" onclick="PutInJpeg(); return false;" value="Сохранить" />
@@ -152,7 +152,7 @@
     </div>
     <div>
         <canvas width="1" height="1"></canvas>
-    </div>
+    </div>*@
     <!--<label id="Label"></label><br />
     <img src="~/Temp/mypict.png" />-->
 </div>

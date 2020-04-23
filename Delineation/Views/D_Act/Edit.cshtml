@@ -2,13 +2,29 @@
 
 @{
     ViewData["Title"] = "Редактирование";
+    string str = Model?.StrPSline10;
+    string[] arr = str.Split('/');
+    List<SelList> list = new List<SelList>();
+    foreach(string s in arr)
+    {
+        list.Add(new SelList() { Id = s, Text = s });
+    }
+    string strsel = Model.Tc.Line10 + ";" + Model.Tc.PS;
+    SelList selectedVal = new SelList() { Id = strsel, Text = strsel };
+    SelectList sel = new SelectList(list,"Id","Text",strsel);
 }
-
+<style type="text/css">
+    .control-label {
+        font-weight: 700;
+    }
+</style>
     <h1>Редактирование</h1>
-
 <h4>Акт</h4>
 <hr />
-<a asp-action="Drawing" asp-route-id="@Model.Id">редактировать схему разграничения</a>
+<dl>
+    <dd><a asp-action="Index">Назад к списку</a></dd>
+    <dt><a asp-action="Drawing" asp-route-id="@Model.Id">редактировать схему питания электроустановки</a></dt>
+</dl>
 <table style="width:100%">
     <tr>
         <td></td>
@@ -25,6 +41,9 @@
                             @Model.Date.ToString("dd.MM.yyyy")
                             <input type="hidden" asp-for="Date" class="form-control" />
                             <input type="hidden" asp-for="TcId" />
+                            <input type="hidden" asp-for="StrPSline10" /><br />
+                            <label for="FIOcons" class="control-label">ФИО заявителя в именительном падеже</label><br />
+                            <input type="text" class="form-control" name="FIOcons" value="@Model.Tc.FIO" />
                         </div>
                         <div class="form-group form-check">
                             <label class="form-check-label">
@@ -55,6 +74,10 @@
                             <label asp-for="DevExpl" class="control-label"></label>
                             <input asp-for="DevExpl" class="form-control" />
                             <span asp-validation-for="DevExpl" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Temp" class="control-label"></label>
+                            <select asp-for="Temp" class="form-control" asp-items ="sel"></select>
                         </div>
                         <div class="form-group form-check">
                             <label class="form-check-label">
@@ -163,14 +186,15 @@
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Tc.Line04) (@Html.DisplayFor(model => model.Tc.Line04InvNum))
+                <dt>
+                    @Html.DisplayNameFor(model => model.Tc.Pillar)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Tc.Pillar)
                 </dd>
             </dl>
         </td>
     </tr>
 </table>
 
-
-<div>
-    <a asp-action="Index">Назад к списку</a>
-</div>
 

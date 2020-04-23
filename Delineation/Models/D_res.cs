@@ -79,26 +79,26 @@ namespace Delineation.Models
         [Display(Name = "РЭС")]
         public int? ResId { get; set; }
 
-        [Display(Name = "Наименование организации"), Column(TypeName = "nvarchar(150)"), StringLength(150)]
+        [Display(Name = "Наименование организации"), Column(TypeName = "nvarchar(500)"), StringLength(500)]
         public string Company { get; set; }
 
         [Display(Name = "ФИО заявителя"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
         public string FIO { get; set; }
 
-        [Display(Name = "Наименование объекта"), Column(TypeName = "nvarchar(150)"), StringLength(150)]
+        [Display(Name = "Наименование объекта"), Column(TypeName = "nvarchar(500)"), StringLength(500)]
         public string ObjName { get; set; }
 
-        [Display(Name = "Адрес объекта строительства"), Column(TypeName = "nvarchar(200)"), StringLength(200)]
+        [Display(Name = "Адрес объекта строительства"), Column(TypeName = "nvarchar(250)"), StringLength(250)]
         public string Address { get; set; }
 
         [Display(Name = "Разрешенная мощность, кВт."), Column(TypeName = "nvarchar(7)"), StringLength(7, ErrorMessage = "допустимая длинна - 7 символов")]
         public string Pow { get; set; }
         
-        [Display(Name = "Категория по надежн. эл. снабжен. эл. установок потребителя")]
-        public int Category { get; set; }
+        [Display(Name = "Категория по надежн. эл. снабжен. эл. установок потребителя"), Column(TypeName = "nvarchar(5)"), StringLength(5)]
+        public string Category { get; set; }
 
-        [Display(Name = "Категория по надежн. эл. снабжен. внешней схемы")]
-        public int Category2 { get; set; }
+        [Display(Name = "Категория по надежн. эл. снабжен. внешней схемы"), Column(TypeName = "nvarchar(5)"), StringLength(5)]
+        public string Category2 { get; set; }
 
         [Display(Name = "Название ПС"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
         public string PS { get; set; }
@@ -127,7 +127,7 @@ namespace Delineation.Models
         [Display(Name = "Инвентарный №")]
         public int Line04InvNum { get; set; }
 
-        [Display(Name = "Опора"), Column(TypeName = "nvarchar(10)"), StringLength(10)]
+        [Display(Name = "Опора №"), Column(TypeName = "nvarchar(10)"), StringLength(10)]
         public string Pillar { get; set; }
     }
     public class D_Act
@@ -168,6 +168,11 @@ namespace Delineation.Models
         [Display(Name = "Срок действия акта"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
         public string Validity { get; set; }
 
+        [Display(Name = "Основная питающая линия 10кВ")]
+        [NotMapped]
+        public string Temp { get; set; }
+        
+        public string StrPSline10 { get; set; }
     }
     public class DelineationContext : DbContext
     {

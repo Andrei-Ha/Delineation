@@ -1,9 +1,9 @@
 ﻿@model Delineation.Models.D_Act
-
 @{
     ViewData["Title"] = "Create";
 }
-
+<link rel="stylesheet" href="~/lib/bootstrap-select-1.13.9/css/bootstrap-select.min.css" />
+<script src="~/lib/bootstrap-select-1.13.9/js/bootstrap-select.min.js"></script>
 <h1>Добавление нового акта разграничения</h1>
 
 <h4>На основании выданных технических условий:</h4>
@@ -12,8 +12,8 @@
     <div class="col-md-12">
         <form asp-action="Create">
             <div class="form-group">
-                <label asp-for="TcId" class="control-label"></label>
-                <select asp-for="TcId" class ="form-control" asp-items="ViewBag.TcId"></select>
+                @*<label asp-for="TcId" class="control-label"></label>*@
+                <select asp-for="TcId"  asp-items="ViewBag.TcId" class="selectpicker show-tick form-control" title="выберите ТУ..." data-live-search="true"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Сохранить" class="btn btn-primary" />
@@ -21,8 +21,12 @@
         </form>
     </div>
 </div>
-
 <div>
     <a asp-action="Index">Назад к списку</a>
 </div>
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+    });
+</script>
 

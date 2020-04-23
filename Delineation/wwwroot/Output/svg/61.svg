@@ -1,0 +1,11 @@
+
+                <svg id="MySvg" style="display:inline-block" class="MySvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" onload="makeDraggable(evt)">
+                    <line id="nachalo" class="bottom"></line>
+                        <text class="draggable top" x="0" y="0" transform="translate(30 30)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ПС ЯСЕЛЬДА-110</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(42.2754 47.6647)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ВЛ 10кВ №341</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(312.335 217.126) rotate(-90 127.336 0.00000278302)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ТП-46:ТП-46 (н.п. В. Городищенская )</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(527.605 56.0479)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ВЛ 4</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(621.617 339.581)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">оп.№ 8</text>
+                    <rect id="konec" class="top" x="0" y="0" width="900" height="600" stroke="black" stroke-width="2" fill="none"></rect>
+                </svg>
+            
