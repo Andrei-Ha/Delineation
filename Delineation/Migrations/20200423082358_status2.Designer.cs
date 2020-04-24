@@ -4,14 +4,16 @@ using Delineation.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Delineation.Migrations
 {
     [DbContext(typeof(DelineationContext))]
-    partial class DelineationContextModelSnapshot : ModelSnapshot
+    [Migration("20200423082358_status2")]
+    partial class status2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,46 +83,6 @@ namespace Delineation.Migrations
                     b.HasIndex("TcId");
 
                     b.ToTable("D_Act");
-                });
-
-            modelBuilder.Entity("Delineation.Models.D_Agreement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Accept")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("ActId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Info")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(250)")
-                        .HasMaxLength(250);
-
-                    b.Property<int>("PersonId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActId");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("D_Agreement");
                 });
 
             modelBuilder.Entity("Delineation.Models.D_Person", b =>
@@ -421,21 +383,6 @@ namespace Delineation.Migrations
                     b.HasOne("Delineation.Models.D_Tc", "Tc")
                         .WithMany()
                         .HasForeignKey("TcId");
-                });
-
-            modelBuilder.Entity("Delineation.Models.D_Agreement", b =>
-                {
-                    b.HasOne("Delineation.Models.D_Act", "Act")
-                        .WithMany("Agreements")
-                        .HasForeignKey("ActId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Delineation.Models.D_Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Delineation.Models.D_Res", b =>

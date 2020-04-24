@@ -1,9 +1,12 @@
 ﻿@model IEnumerable<Delineation.Models.D_Act>
 
 @{
-    ViewData["Title"] = "Выданные акты";
+    ViewData["Title"] = "Редактирование";
 }
-    <h1>Выданные акты</h1>
+    <h1>Редактирование актов</h1>
+@*<p>
+    <a asp-action="Create">добавить новый</a>
+</p>*@
 <table class="table">
     <thead>
         <tr>
@@ -52,11 +55,9 @@
                 @Html.DisplayFor(model => item.Tc.Address)
             </td>
             <td>
-                @if (((List<string>)ViewBag.fileNames).Any(p => p == item.Id.ToString()))
-                {
-                    string link = "../Output/pdf/" + item.Id + ".pdf";
-                    <a href="@link" rel="noopener noreferrer" target="_blank">посмотреть</a>
-                }
+                <a asp-action="Edit" asp-route-id="@item.Id">изменить</a>   <br />
+                <a asp-action="Details" asp-route-id="@item.Id">подробно</a> <br />
+                <a asp-action="Delete" asp-route-id="@item.Id">удалить</a>
             </td>
         </tr>
 }

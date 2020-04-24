@@ -180,10 +180,19 @@ namespace Delineation.Controllers
             DirectoryInfo directory = new DirectoryInfo(path_dir_pdf);
             List<string> fileNames = directory.GetFiles().Select(p=>p.Name.Split('.')[0]).ToList();
             ViewBag.fileNames = fileNames;
-            var delineationContext = _context.d_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p=>p.Nach);
+            var delineationContext = _context.d_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p=>p.Nach).Where(p => p.State == (int)Stat.Completed);
             return View(await delineationContext.ToListAsync());
         }
-
+        public async Task<IActionResult> Ind_agree()
+        {
+            var delineationContext = _context.d_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p => p.State == (int)Stat.Agreement);
+            return View(await delineationContext.ToListAsync());
+        }
+        public async Task<IActionResult> Ind_edit()
+        {
+            var delineationContext = _context.d_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p=>p.State==(int)Stat.Edit);
+            return View(await delineationContext.ToListAsync());
+        }
         // GET: D_Act/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -442,21 +451,24 @@ namespace Delineation.Controllers
             FileInfo svgToDel = new FileInfo(path_svg);
             if (svgToDel.Exists) svgToDel.Delete();
             DeleteAllImageById(id, "0");
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Ind_edit));
         }
 
         private bool D_ActExists(int id)
         {
             return _context.d_Acts.Any(e => e.Id == id);
         }
-        public async Task<IActionResult> CreateAct(int? id)
+        public async Task<IActionResult> CreateAct(int? id, string type)
         {
             _context.D_Persons.Load();
             D_Act act = _context.D_Act.Include(p => p.Tc).ThenInclude(o => o.Res).Where(i => i.Id == id).FirstOrDefault();
-            CreateDoc(act);
-            return RedirectToAction(nameof(Index));
+            CreateDoc(act,type);
+            if (type == "agreement")
+                return RedirectToAction(nameof(Ind_edit));
+            else
+                return RedirectToAction(nameof(Index));
         }
-        private void CreateDoc(D_Act act)
+        private void CreateDoc(D_Act act,string type)
         {
             bool IsEntity = act.IsEntity, IsTransit = act.IsTransit;
             string str_b = "", str_e = "";
@@ -592,118 +604,127 @@ namespace Delineation.Controllers
                 )
             { ParagraphFormat = { Alignment = HorizontalAlignment.Justify } });
             ///////////////////////////////////---sectiion2---
-            Section section2 = new Section(doc);
-            doc.Sections.Add(section2);
-            ///---
-            Paragraph paragraph21 = new Paragraph(doc) { ParagraphFormat = { Alignment = HorizontalAlignment.Center } };
-            section2.Blocks.Add(paragraph21);
-            paragraph21.Inlines.Add(new Run(doc, "Схема питания электроустановки:"));
-            paragraph21.Inlines.Add(new SpecialCharacter(doc, SpecialCharacterType.LineBreak));
-            // find picture to insert
-            string path_pict = (_webHostEnvironment.WebRootPath + "\\Output\\png\\");
-            DirectoryInfo dirPNG = new DirectoryInfo(path_pict);
-            FileInfo pictFile = dirPNG.EnumerateFiles().Where(p => p.Name.Split('.')[0] == act.Id.ToString()).FirstOrDefault();
-            if (pictFile != null)
+            if (type != "agreement")
             {
-                path_pict += pictFile.Name;
-                Picture pict = new Picture(doc, path_pict, 159, 106, LengthUnit.Millimeter);
-                paragraph21.Inlines.Add(pict);
+                Section section2 = new Section(doc);
+                doc.Sections.Add(section2);
+                ///---
+                Paragraph paragraph21 = new Paragraph(doc) { ParagraphFormat = { Alignment = HorizontalAlignment.Center } };
+                section2.Blocks.Add(paragraph21);
+                paragraph21.Inlines.Add(new Run(doc, "Схема питания электроустановки:"));
+                paragraph21.Inlines.Add(new SpecialCharacter(doc, SpecialCharacterType.LineBreak));
+                // find picture to insert
+                string path_pict = (_webHostEnvironment.WebRootPath + "\\Output\\png\\");
+                DirectoryInfo dirPNG = new DirectoryInfo(path_pict);
+                FileInfo pictFile = dirPNG.EnumerateFiles().Where(p => p.Name.Split('.')[0] == act.Id.ToString()).FirstOrDefault();
+                if (pictFile != null)
+                {
+                    path_pict += pictFile.Name;
+                    Picture pict = new Picture(doc, path_pict, 159, 106, LengthUnit.Millimeter);
+                    paragraph21.Inlines.Add(pict);
+                }
+                //---
+                section2.Blocks.Add(new Paragraph(doc,
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new Run(doc, "ПРИМЕЧАНИЕ"),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new Run(doc, "1.Границы по схеме обозначаются: балансовой принадлежности - красной линией; эксплуатационной ответственности - синей."),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new Run(doc, "2.При изменении срока действия Акта, присоединенных мощностей, схемы внешнего электроснабжения, категории надежности электроснабжения, границ балансовой принадлежности и эксплуатационной ответственности Акт подлежит замене."),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new Run(doc, "3.Доверенность потребителя на подписание акта разграничения хранится в энергоснабжающей организации."),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new Run(doc, "4.На схеме питания электроустановки указываются места установки приборов учета, параметры силовых и измерительных трансформаторов и ЛЭП."),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new Run(doc, "5.Потребителю запрещается без согласования с диспетчером энергоснабжающей организации самовольно производить переключения и изменять схему внешнего электроснабжения."),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new Run(doc, "6.Потребителю запрещается без согласования с энергоснабжающей организацией подключать к своим электроустановкам сторонних потребителей."),
+                    new SpecialCharacter(doc, SpecialCharacterType.Tab),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak)
+                    )
+                { ParagraphFormat = { Alignment = HorizontalAlignment.Justify } }
+                );
+                //---
+                var table2 = new Table(doc) { TableFormat = { PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage) } };
+                table2.TableFormat.Borders.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Black, 1);
+                var row21 = new TableRow(doc);
+                table2.Rows.Add(row21);
+                var cell2_left = new TableCell(doc, new Paragraph(doc,
+                    new Run(doc, "Представитель энергоснабжающей организации"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "Представитель Потребителя"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "Представитель владельца"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "транзитных электрических сетей"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "Срок действия акта"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "Главный инженер"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "Зам.начальника РЭС по сбыту энерги"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "Бухгалтер РЭС")
+                    ));
+                var cell2_center = new TableCell(doc, new Paragraph(doc,
+                    new Run(doc, "_____"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "_____"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "_____"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, str_Validity),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "_____"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "_____"),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, "_____")
+                    ));
+                var cell2_right = new TableCell(doc, new Paragraph(doc,
+                    new Run(doc, str_Nach),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, str_Cons),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, str_FIOtrans),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, ""),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, str_GlInzh),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, str_ZamNach),
+                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
+                    new Run(doc, str_Buh)
+                    ));
+                row21.Cells.Add(cell2_left);
+                row21.Cells.Add(cell2_center);
+                row21.Cells.Add(cell2_right);
+                section2.Blocks.Add(table2);
+                //---save---//
+                doc.Save(path_docx);
+                doc.Save(path_pdf);
+                _context.d_Acts.FirstOrDefault(p => p.Id == act.Id).State = (int)Stat.Completed;
             }
-            //---
-            section2.Blocks.Add(new Paragraph(doc,
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new Run(doc, "ПРИМЕЧАНИЕ"),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new Run(doc, "1.Границы по схеме обозначаются: балансовой принадлежности - красной линией; эксплуатационной ответственности - синей."),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new Run(doc, "2.При изменении срока действия Акта, присоединенных мощностей, схемы внешнего электроснабжения, категории надежности электроснабжения, границ балансовой принадлежности и эксплуатационной ответственности Акт подлежит замене."),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new Run(doc, "3.Доверенность потребителя на подписание акта разграничения хранится в энергоснабжающей организации."),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new Run(doc, "4.На схеме питания электроустановки указываются места установки приборов учета, параметры силовых и измерительных трансформаторов и ЛЭП."),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new Run(doc, "5.Потребителю запрещается без согласования с диспетчером энергоснабжающей организации самовольно производить переключения и изменять схему внешнего электроснабжения."),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new Run(doc, "6.Потребителю запрещается без согласования с энергоснабжающей организацией подключать к своим электроустановкам сторонних потребителей."),
-                new SpecialCharacter(doc, SpecialCharacterType.Tab),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak)
-                )
-            { ParagraphFormat = { Alignment = HorizontalAlignment.Justify } }
-            );
-            //---
-            var table2 = new Table(doc) { TableFormat = { PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage) } };
-            table2.TableFormat.Borders.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Black, 1);
-            var row21 = new TableRow(doc);
-            table2.Rows.Add(row21);
-            var cell2_left = new TableCell(doc, new Paragraph(doc,
-                new Run(doc, "Представитель энергоснабжающей организации"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "Представитель Потребителя"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "Представитель владельца"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "транзитных электрических сетей"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "Срок действия акта"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "Главный инженер"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "Зам.начальника РЭС по сбыту энерги"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "Бухгалтер РЭС")
-                ));
-            var cell2_center = new TableCell(doc, new Paragraph(doc,
-                new Run(doc, "_____"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "_____"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "_____"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, str_Validity),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "_____"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "_____"),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "_____")
-                ));
-            var cell2_right = new TableCell(doc, new Paragraph(doc,
-                new Run(doc, str_Nach),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, str_Cons),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, str_FIOtrans),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, ""),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, str_GlInzh),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, str_ZamNach),
-                new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, str_Buh)
-                ));
-            row21.Cells.Add(cell2_left);
-            row21.Cells.Add(cell2_center);
-            row21.Cells.Add(cell2_right);
-            section2.Blocks.Add(table2);
-            //---save---//
-            doc.Save(path_docx);
-            doc.Save(path_html);
-            doc.Save(path_pdf);
+            else
+            {
+                doc.Save(path_html);
+                _context.d_Acts.FirstOrDefault(p => p.Id == act.Id).State = (int)Stat.Agreement;
+            }
+            _context.SaveChanges();
         }
     }
 }

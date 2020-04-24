@@ -184,7 +184,7 @@
     <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a> |
     @if (ViewBag.fileName != null)
     {
-    <a asp-action="CreateAct" asp-route-id="@Model.Id">Сформировать АКТ</a>@Html.Raw("|")
+    <a asp-action="CreateAct" asp-route-id="@Model.Id" asp-route-type="agreement">Сформировать для согласования</a>@Html.Raw("|")
     }
-    <a asp-action="Index">Назад к списку</a>
+    <a asp-action="Ind_edit">Назад к списку</a>
 </div>

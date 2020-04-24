@@ -9,6 +9,12 @@ using Delineation.Models;
 
 namespace Delineation.Models
 {
+    enum Stat
+    {
+        Edit,
+        Agreement,
+        Completed
+    }
     public class D_Res
     {
         [Key]
@@ -168,11 +174,31 @@ namespace Delineation.Models
         [Display(Name = "Срок действия акта"), Column(TypeName = "nvarchar(50)"), StringLength(50)]
         public string Validity { get; set; }
 
+        [Display(Name = "статус")]
+        public int State { get; set; }
+
+        public List<D_Agreement> Agreements { get; set; }
+
         [Display(Name = "Основная питающая линия 10кВ")]
         [NotMapped]
         public string Temp { get; set; }
         
         public string StrPSline10 { get; set; }
+    }
+    public class D_Agreement
+    {
+        public int Id { get; set; }
+        public D_Act Act { get; set; }
+        public int ActId { get; set; }
+        public D_Person Person { get; set; }
+        public int PersonId { get; set; }
+        public bool Accept { get; set; }
+        [Display(Name = "Замечания"), Column(TypeName = "nvarchar(250)"), StringLength(250)]
+        public string Note { get; set; }
+        [Display(Name = "дата выдачи акта"), DataType(DataType.Date)]
+        public DateTime Date { get; set; }
+        [Display(Name = "информация"), Column(TypeName = "nvarchar(100)"), StringLength(100)]
+        public string Info { get; set; }
     }
     public class DelineationContext : DbContext
     {
@@ -209,6 +235,9 @@ namespace Delineation.Models
                     new D_Res{ Id=546000, Name="Дрогичинский", BuhId=1, GlInzhId=1, NachId=1, ZamNachId=1}
                 });
             modelBuilder.Entity<D_Act>().Property(p => p.Date).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<D_Act>().Property(u => u.State).HasDefaultValue(Stat.Edit);
+            modelBuilder.Entity<D_Agreement>().Property(p => p.Accept).HasDefaultValue(false);
+            modelBuilder.Entity<D_Agreement>().Property(p => p.Date).HasDefaultValueSql("GETDATE()");
             base.OnModelCreating(modelBuilder);
             {
                 //Атрибут Table позволяет переопределить сопоставление с таблицей по имени: [Table("People")]

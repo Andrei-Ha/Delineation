@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<Delineation.Models.D_Act>
 
 @{
-    ViewData["Title"] = "Выданные акты";
+    ViewData["Title"] = "На согласовании";
 }
-    <h1>Выданные акты</h1>
+
+    <h1>Акты на согласовании</h1>
 <table class="table">
     <thead>
         <tr>
@@ -28,10 +29,18 @@
             <th>
 
             </th>
+            <th>
+
+            </th>
+            <th>
+
+            </th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
+    string link_html = "../Output/html/" + item.Id + ".html";
+    string link_png = "../Output/png/" + item.Id + ".png";
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Date)
@@ -52,11 +61,13 @@
                 @Html.DisplayFor(model => item.Tc.Address)
             </td>
             <td>
-                @if (((List<string>)ViewBag.fileNames).Any(p => p == item.Id.ToString()))
-                {
-                    string link = "../Output/pdf/" + item.Id + ".pdf";
-                    <a href="@link" rel="noopener noreferrer" target="_blank">посмотреть</a>
-                }
+                <a href="@link_html" rel="noopener noreferrer" target="_blank">содержание</a>
+            </td>
+            <td>
+                <a href="@link_png" rel="noopener noreferrer" target="_blank">схема</a>
+            </td>
+            <td>
+
             </td>
         </tr>
 }
