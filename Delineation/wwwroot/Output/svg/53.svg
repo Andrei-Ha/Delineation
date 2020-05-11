@@ -1,0 +1,14 @@
+
+                <svg id="MySvg" style="display:inline-block" class="MySvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" onload="makeDraggable(evt)">
+                    <line id="nachalo" class="bottom"></line>
+
+                        <line class="draggable" x1="0" y1="0" x2="50" y2="0" stroke-width="2" stroke="red" transform="translate(537.725 402.096)"></line>
+                        <line class="draggable" x1="0" y1="0" x2="50" y2="0" stroke-width="2" stroke="blue" transform="translate(674.252 258.982) rotate(-90 25 5.46392e-7)"></line>
+                        <line class="draggable" x1="855.5389221556886" y1="35.92814371257485" x2="855.5389221556886" y2="561.377245508982" stroke-width="1" stroke="black"></line><line class="draggable" x1="856.437125748503" y1="561.377245508982" x2="17.51497005988024" y2="561.377245508982" stroke-width="1" stroke="black"></line><rect class="draggable" x="560.0299401197605" y="260.47904191616766" width="267.66467065868267" height="278.4431137724551" stroke-width="1" stroke="black" fill="none"></rect><circle class="draggable" cx="560.9281437125749" cy="259.5808383233533" r="10.042221455837332"></circle><text class="draggable top" x="0" y="0" transform="translate(30 30)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ПС МОЛОТКОВИЧИ-35 (инв.№ 454762)</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(63.8323 51.2575)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ВЛ 10кВ №218 (инв.№ 863441)</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(76.1078 109.341)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">КТП-326 (инв.№ 5305470)</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(342.575 79.4012)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ВЛ 1 (инв.№ 8433213)</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(230 230)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">оп.№ 11</text>
+                    <text class="draggable" x="0" y="0" transform="translate(548.503 237.725)" text-anchor="start">uy</text><text class="draggable" x="0" y="0" transform="translate(812.575 244.012)" text-anchor="start">asd</text><text class="draggable" x="0" y="0" transform="translate(573.653 526.048)" text-anchor="start">kjhk</text><rect id="konec" class="top" x="0" y="0" width="900" height="600" stroke="black" stroke-width="2" fill="none"></rect>
+                </svg>
+            

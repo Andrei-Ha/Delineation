@@ -31,10 +31,46 @@ namespace Delineation.Controllers
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
+        public async Task<IActionResult> Agreement(int? id)
+        {
+            if (id != null)
+            {
+                var d_Act = await _context.D_Acts.Include(p => p.Tc).FirstOrDefaultAsync(p => p.Id == id);
+                ViewBag.Agreements = _context.D_Agreements.Include(p=>p.Person).ThenInclude(o=>o.Position).Where(p => p.ActId == id).ToList();
+                return View(d_Act);
+            }
+            else
+            {
+                return NotFound();
+            }
+            
+        }
+        [HttpPost]
+        public async Task<IActionResult> Agreement(int Act_id, int agree, int Agr_id, string Note)
+        {
+            D_Agreement d_Agreement = await _context.D_Agreements.FirstOrDefaultAsync(o => o.Id == Agr_id);
+            d_Agreement.Note = Note;
+            d_Agreement.Info = DateTime.Now.ToString("HH:mm dd.MM.yyyy") + "/" + "10.181.64.222";
+            if (agree == 0)
+                d_Agreement.Accept = false;
+            else if (agree == 1)
+                d_Agreement.Accept = true;
+            _context.SaveChanges();
+            D_Act d_Act = await _context.D_Acts.FirstOrDefaultAsync(p => p.Id == Act_id);
+            if (d_Act.Agreements.All(p => p.Info != null))
+            {
+                if (d_Act.Agreements.All(p => p.Accept == true))
+                    d_Act.State = (int)Stat.Accepted;
+                else
+                    d_Act.State = (int)Stat.Rework;
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Ind_agree");
+        }
         public async Task<IActionResult> Drawing(int? id )
         {
             List<string> list_svg = new List<string>();
-            if (id != null)
+            if (id != null && id != 0)
             {
                 string path_svg = _webHostEnvironment.WebRootPath + "\\Output\\svg\\" + id.ToString() + ".svg";
                 FileInfo MySvg = new FileInfo(path_svg);
@@ -64,7 +100,13 @@ namespace Delineation.Controllers
                 {
                     if (fileInfo.Exists) ViewBag.FileName = fileInfo.Name;
                 }
-                D_Act d_Act = await _context.d_Acts.Include(p => p.Tc).FirstOrDefaultAsync(o => o.Id == id);
+                D_Act d_Act = await _context.D_Acts.Include(p => p.Tc).FirstOrDefaultAsync(o => o.Id == id);
+                string path_vsd = _webHostEnvironment.WebRootPath + "\\Output\\vsd\\" + d_Act.Tc.TPnum + ".vsd",
+                    path_lvsd = _webHostEnvironment.WebRootPath + "\\Output\\vsd038\\l" + d_Act.Tc.TPnum + ".vsd";
+                FileInfo vsd = new FileInfo(path_vsd);
+                FileInfo lvsd = new FileInfo(path_lvsd);
+                if (vsd.Exists) ViewBag.vsd = d_Act.Tc.TPnum + ".vsd";
+                if (lvsd.Exists) ViewBag.lvsd = "l" + d_Act.Tc.TPnum + ".vsd";
                 return View(d_Act);
             }
             else
@@ -104,7 +146,7 @@ namespace Delineation.Controllers
             {
                 DeleteAllImageById(id,"");
             }            
-            D_Act d_Act = await _context.d_Acts.Include(p => p.Tc).FirstOrDefaultAsync(o => o.Id == id);
+            D_Act d_Act = await _context.D_Acts.Include(p => p.Tc).FirstOrDefaultAsync(o => o.Id == id);
             return View(d_Act);
         }*/
         private void DeleteAllImageById(int id,string ext)
@@ -168,29 +210,28 @@ namespace Delineation.Controllers
                 }
             }
             else { if(raw == "0") DeleteAllImageById(id, "0"); }
-            //---
-            //D_Act d_Act = _context.d_Acts.Include(p => p.Tc).FirstOrDefault(o => o.Id == id);
-            var d_Act = _context.d_Acts.Include(p => p.Tc).ThenInclude(p => p.Res).FirstOrDefault(p => p.Id == id);
+            var d_Act = _context.D_Acts.Include(p => p.Tc).ThenInclude(p => p.Res).FirstOrDefault(p => p.Id == id);
             return RedirectToAction(nameof(Details),d_Act);
         }
         // GET: D_Act
         public async Task<IActionResult> Index()
         {
+            ViewBag.sprpodrs = _context.Units.ToList();
             string path_dir_pdf = _webHostEnvironment.WebRootPath + "\\Output\\pdf";
             DirectoryInfo directory = new DirectoryInfo(path_dir_pdf);
             List<string> fileNames = directory.GetFiles().Select(p=>p.Name.Split('.')[0]).ToList();
             ViewBag.fileNames = fileNames;
-            var delineationContext = _context.d_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p=>p.Nach).Where(p => p.State == (int)Stat.Completed);
+            var delineationContext = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p=>p.Nach).Where(p => p.State == (int)Stat.Completed);
             return View(await delineationContext.ToListAsync());
         }
         public async Task<IActionResult> Ind_agree()
         {
-            var delineationContext = _context.d_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p => p.State == (int)Stat.Agreement);
+            var delineationContext = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p => p.State == (int)Stat.InAgreement);
             return View(await delineationContext.ToListAsync());
         }
         public async Task<IActionResult> Ind_edit()
         {
-            var delineationContext = _context.d_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p=>p.State==(int)Stat.Edit);
+            var delineationContext = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p=>(p.State==(int)Stat.Edit)|| (p.State == (int)Stat.InAgreement)|| (p.State == (int)Stat.Rework) || (p.State == (int)Stat.Accepted)).OrderBy(o=>o.State);
             return View(await delineationContext.ToListAsync());
         }
         // GET: D_Act/Details/5
@@ -206,8 +247,8 @@ namespace Delineation.Controllers
                 FileInfo MyPng = new FileInfo(path_svg);
                 if (MyPng.Exists) { ViewBag.fileName = MyPng.Name; }
             }
-            var d_Act = await _context.d_Acts
-                .Include(d => d.Tc)
+            var d_Act = await _context.D_Acts
+                .Include(d => d.Tc).Include(o=>o.Agreements).ThenInclude(p=>p.Person).ThenInclude(o=>o.Position)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (d_Act == null)
             {
@@ -280,6 +321,7 @@ namespace Delineation.Controllers
             if (str_numTP != "") // обращение к базе Диполя
             {
                 string path_vsd = _webHostEnvironment.WebRootPath + "\\Output\\vsd\\" + str_numTP + ".vsd";
+                string path_vsd038 = _webHostEnvironment.WebRootPath + "\\Output\\vsd038\\l" + str_numTP + ".vsd";
                 using (OracleConnection con = new OracleConnection(ConnStringOracle))
                 {
                     string doc_code = "";
@@ -316,6 +358,7 @@ namespace Delineation.Controllers
                         }
                         FileInfo file_vsd = new FileInfo(path_vsd);
                         if (!file_vsd.Exists)
+                        //if(true)
                         {
                             cmd.CommandText = "select PFILE, DOC_CODE from TP_SHEM WHERE DOC_CODE='" + doc_code + "'";
                             OracleDataReader MyReaderB = cmd.ExecuteReader();
@@ -331,14 +374,40 @@ namespace Delineation.Controllers
                                     }
                                 }
                             }
+                            string doc_code_vl0038 = doc_code.Split('-')[0] + "-CL038-" + doc_code.Split('-')[2];
+                            //не будет работать если номер отходящей линии двузначный
+                            cmd.CommandText = "select PFILE, DOC_CODE from CL038_VISIO WHERE SUBSTR(DOC_CODE,0,LENGTH(doc_code)-2)='"+doc_code_vl0038+"'";
+                            MyReaderB = cmd.ExecuteReader();
+                            using (MyReaderB)
+                            {
+                                while (MyReaderB.Read())
+                                {
+                                    OracleBinary oracleBinary = MyReaderB.GetOracleBinary(0);
+                                    using (FileStream fstream = new FileStream(path_vsd038, FileMode.OpenOrCreate))
+                                    {
+                                        byte[] array = (byte[])oracleBinary;
+                                        fstream.Write(array, 0, array.Length);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
             _context.D_Tces.Add(tc);
-            _context.d_Acts.Add(new D_Act { Tc=tc , StrPSline10=str.Substring(0,str.Length-1)});
+            _context.D_Acts.Add(new D_Act { Tc=tc , StrPSline10=str.Substring(0,str.Length-1)});
             _context.SaveChanges();
-            D_Act act = _context.D_Act.ToList().LastOrDefault(p => p.TcId == TcId);
+            D_Act act = _context.D_Acts.ToList().LastOrDefault(p => p.TcId == TcId);
+            // отметка о выдаче акта на основании выданного ТУ в dbo.TU_ALL
+            using (SqlConnection con = new SqlConnection(ConnStringSql))
+            {
+                using (SqlCommand cmd = con.CreateCommand())
+                {
+                    con.Open();
+                    cmd.CommandText = "UPDATE dbo.TU_ALL SET del=3, n_akt=" + act.Id + ", del_date=SYSDATETIME() WHERE kluch=" + TcId.ToString();
+                    var Result = cmd.ExecuteNonQuery();
+                }
+            }
             return RedirectToAction(nameof(Edit), act);
         }
 
@@ -350,7 +419,7 @@ namespace Delineation.Controllers
                 return NotFound();
             }
 
-            var d_Act = await _context.d_Acts.Include(p=>p.Tc).ThenInclude(p=>p.Res).FirstOrDefaultAsync(p=>p.Id==id);
+            var d_Act = await _context.D_Acts.Include(p=>p.Tc).ThenInclude(p=>p.Res).FirstOrDefaultAsync(p=>p.Id==id);
             if (d_Act == null)
             {
                 return NotFound();
@@ -393,7 +462,7 @@ namespace Delineation.Controllers
                         throw;
                     }
                 }
-                var d_Act2 = _context.d_Acts.Include(p => p.Tc).ThenInclude(p => p.Res).FirstOrDefault(p => p.Id == id);
+                var d_Act2 = _context.D_Acts.Include(p => p.Tc).ThenInclude(p => p.Res).FirstOrDefault(p => p.Id == id);
                 return RedirectToAction(nameof(Drawing),d_Act2);
             }
             /*ViewData["TcId"] = new SelectList(_context.D_Tces.OrderBy(p=>p.Date).Select(p=>new { Id = p.Id, text = p.Num + " от " + p.Date.ToString("dd.MM.yyyy") + "; " + p.FIO + "; " + p.Address }), "Id", "text", d_Act.TcId);*/
@@ -408,7 +477,7 @@ namespace Delineation.Controllers
                 return NotFound();
             }
 
-            var d_Act = await _context.d_Acts
+            var d_Act = await _context.D_Acts
                 .Include(d => d.Tc)
                 .ThenInclude(l=>l.Res)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -425,9 +494,19 @@ namespace Delineation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            D_Act d_Act = await _context.d_Acts.FindAsync(id);
+            D_Act d_Act = await _context.D_Acts.FindAsync(id);
             D_Tc d_Tc = await _context.D_Tces.FindAsync(d_Act.TcId);
-            _context.d_Acts.Remove(d_Act);
+            // удаление отметки о выдаче акта на основании выданного ТУ в dbo.TU_ALL
+            using (SqlConnection con = new SqlConnection(ConnStringSql))
+            {
+                using (SqlCommand cmd = con.CreateCommand())
+                {
+                    con.Open();
+                    cmd.CommandText = "UPDATE dbo.TU_ALL SET del=1, n_akt=0, del_date=SYSDATETIME() WHERE kluch=" + d_Tc.Id.ToString();
+                    var Result = cmd.ExecuteNonQuery();
+                }
+            }
+            _context.D_Acts.Remove(d_Act);
             _context.D_Tces.Remove(d_Tc);
             await _context.SaveChangesAsync();
             //
@@ -456,17 +535,27 @@ namespace Delineation.Controllers
 
         private bool D_ActExists(int id)
         {
-            return _context.d_Acts.Any(e => e.Id == id);
+            return _context.D_Acts.Any(e => e.Id == id);
         }
-        public async Task<IActionResult> CreateAct(int? id, string type)
+        public async Task<IActionResult> CreateAct(int id, string type)
         {
             _context.D_Persons.Load();
-            D_Act act = _context.D_Act.Include(p => p.Tc).ThenInclude(o => o.Res).Where(i => i.Id == id).FirstOrDefault();
+            D_Act act = await _context.D_Acts.Include(p => p.Tc).ThenInclude(o => o.Res).Where(i => i.Id == id).FirstOrDefaultAsync();
             CreateDoc(act,type);
             if (type == "agreement")
+            {
+                // согласовать повторно
+                _context.D_Agreements.RemoveRange(_context.D_Agreements.Where(p => p.ActId == id));
+                //
+                _context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = 2, Accept = true, Info=DateTime.Now.ToString("HH:mm dd.MM.yyyy")+"/" +"10.181.64.222" });
+                _context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = 3, Accept = true, Info = DateTime.Now.ToString("HH:mm dd.MM.yyyy") + "/" + "10.181.64.222" });
+                _context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = 4 });
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Ind_edit));
-            else
+            }
+            else if (type == "completed")
                 return RedirectToAction(nameof(Index));
+            else return NotFound();
         }
         private void CreateDoc(D_Act act,string type)
         {
@@ -553,7 +642,7 @@ namespace Delineation.Controllers
             row.Cells.Add(cell_right);
             section1.Blocks.Add(table);
             //---
-            string str_act = "\nРУП «Брестэнерго» именуемое в дальнейшем «Энергоснабжающая организация», в лице начальника " + str_RESa + " РЭС филиала «Пинские электрические сети» РУП «Брестэнерго» "+str_FIOnachRod+" действующего на основании доверенности "+str_Dover+"г. с одной стороны, и "+str_Entity+" лицо "+str_Company+" именуемое в дальнейшем «Потребитель», в лице "+str_FIOcons+" " + str_ConsDover + " с другой стороны составили настоящий АКТ о нижеследующем.\t";
+            string str_act = "\nРУП «Брестэнерго» именуемое в дальнейшем «Энергоснабжающая организация», в лице начальника " + str_RESa + " РЭС филиала «Пинские электрические сети» РУП «Брестэнерго» "+str_FIOnachRod+" действующего на основании доверенности "+str_Dover+" с одной стороны, и "+str_Entity+" лицо "+str_Company+" именуемое в дальнейшем «Потребитель», в лице "+str_FIOcons+" " + str_ConsDover + " с другой стороны составили настоящий АКТ о нижеследующем.\t";
             section1.Blocks.Add(new Paragraph(doc, str_act) { ParagraphFormat = { Alignment = HorizontalAlignment.Justify } });
             //---
             string str_ty = "На день составления Акта технические условия "+str_NumTc+" от "+str_DateTc+" \n " +
@@ -584,7 +673,7 @@ namespace Delineation.Controllers
                 new Run(doc, str_ConsBalance + " от оп. №" + str_Pillar + " " + str_Line04 + " от " + str_TP + " и внутреннее эл. оборудование расположенное по адресу " + str_Address + " находится на балансе Потребителя"),
                 new SpecialCharacter(doc, SpecialCharacterType.Tab),
                 new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "Граница раздела между "+str_RESom+" РЭС и Потребителем "+str_DevBalance+ " №" + str_Pillar +" " + str_Line04 + " от " + str_TP),
+                new Run(doc, "Граница раздела между "+str_RESom+" РЭС и Потребителем - "+str_DevBalance+ " №" + str_Pillar +" " + str_Line04 + " от " + str_TP),
                 new SpecialCharacter(doc, SpecialCharacterType.Tab),
                 new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
@@ -598,7 +687,7 @@ namespace Delineation.Controllers
                 new Run(doc, str_ConsExpl + " от оп. №" + str_Pillar + " " + str_Line04 + " от " + str_TP + " и внутреннее эл. оборудование расположенное по адресу " + str_Address + " находится на балансе Потребителя"),
                 new SpecialCharacter(doc, SpecialCharacterType.Tab),
                 new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                new Run(doc, "Граница раздела между " + str_RESom + " РЭС и Потребителем " + str_DevExpl + " №" + str_Pillar + " " + str_Line04 + " от " + str_TP),
+                new Run(doc, "Граница раздела между " + str_RESom + " РЭС и Потребителем - " + str_DevExpl + " №" + str_Pillar + " " + str_Line04 + " от " + str_TP),
                 new SpecialCharacter(doc, SpecialCharacterType.Tab),
                 new SpecialCharacter(doc, SpecialCharacterType.LineBreak)
                 )
@@ -670,13 +759,7 @@ namespace Delineation.Controllers
                     new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
                     new Run(doc, "транзитных электрических сетей"),
                     new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, "Срок действия акта"),
-                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, "Главный инженер"),
-                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, "Зам.начальника РЭС по сбыту энерги"),
-                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, "Бухгалтер РЭС")
+                    new Run(doc, "Срок действия акта")
                     ));
                 var cell2_center = new TableCell(doc, new Paragraph(doc,
                     new Run(doc, "_____"),
@@ -686,13 +769,7 @@ namespace Delineation.Controllers
                     new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
                     new Run(doc, "_____"),
                     new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, str_Validity),
-                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, "_____"),
-                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, "_____"),
-                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, "_____")
+                    new Run(doc, str_Validity)
                     ));
                 var cell2_right = new TableCell(doc, new Paragraph(doc,
                     new Run(doc, str_Nach),
@@ -702,13 +779,7 @@ namespace Delineation.Controllers
                     new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
                     new Run(doc, str_FIOtrans),
                     new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, ""),
-                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, str_GlInzh),
-                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, str_ZamNach),
-                    new SpecialCharacter(doc, SpecialCharacterType.LineBreak),
-                    new Run(doc, str_Buh)
+                    new Run(doc, "")
                     ));
                 row21.Cells.Add(cell2_left);
                 row21.Cells.Add(cell2_center);
@@ -717,12 +788,12 @@ namespace Delineation.Controllers
                 //---save---//
                 doc.Save(path_docx);
                 doc.Save(path_pdf);
-                _context.d_Acts.FirstOrDefault(p => p.Id == act.Id).State = (int)Stat.Completed;
+                _context.D_Acts.FirstOrDefault(p => p.Id == act.Id).State = (int)Stat.Completed;
             }
             else
             {
                 doc.Save(path_html);
-                _context.d_Acts.FirstOrDefault(p => p.Id == act.Id).State = (int)Stat.Agreement;
+                _context.D_Acts.FirstOrDefault(p => p.Id == act.Id).State = (int)Stat.InAgreement;
             }
             _context.SaveChanges();
         }

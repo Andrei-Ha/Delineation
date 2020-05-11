@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - Разграничения</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/MyStyle.css" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </head>
@@ -13,7 +14,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/seti50.png" /></a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/seti508.png" /></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -21,22 +22,26 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="D_Act" asp-action="Index">Выданные акты</a>
+                            <a class="nav-link alert-link" style="color:#0000CD;" asp-area="" asp-controller="D_Act" asp-action="Index">Выданные</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="D_Act" asp-action="Ind_agree">На согласовании</a>
+                            <a class="nav-link alert-link" style="color:#A52A2A;" asp-area="" asp-controller="D_Act" asp-action="Ind_agree">Согласование</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="D_Act" asp-action="Ind_edit">Редактирование</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark alert-link" asp-area="" asp-controller="D_Act" asp-action="Create">Создать акт</a>
+                            <a class="nav-link text-dark alert-link" asp-area="" asp-controller="D_Act" asp-action="Create">Создать</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="D_Res" asp-action="Index">Подразделения</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="D_Person" asp-action="Index">Персонал</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">справочники</a>
+                            <div class="dropdown-menu">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="D_Res" asp-action="Index">Подразделения</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="D_Person" asp-action="Index">Персонал</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="D_Position" asp-action="Index">Должности</a>
+                            </div>
                         </li>
                     </ul>
                 </div>

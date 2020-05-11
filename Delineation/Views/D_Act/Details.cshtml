@@ -1,5 +1,4 @@
 ﻿@model Delineation.Models.D_Act
-
 @{
     ViewData["Title"] = "Подробно";
 }
@@ -179,12 +178,74 @@
         </tr>
     </table>
 </div>
-
+<style type="text/css">
+    .table_block {
+        border-radius: 15px;
+        border: 1px solid blue;
+        display: block;
+        padding:10px;
+    }
+</style>
+@if (Model.Agreements.Count > 0)
+{
+    <fieldset style="width:100%;">
+        <legend style="color:blue">Лист согласования:</legend>
+        <table class="table_block" width="100%">
+            <thead>
+                <tr>
+                    <th width="25%">
+                        должность
+                    </th>
+                    <th width="25%">
+                        ФИО
+                    </th>
+                    <th width="25%" style="text-align:center">
+                        согласовано
+                    </th>
+                    <th width="25%">
+                        замечания
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (D_Agreement d_Agreement in Model.Agreements)
+                {
+                    <tr>
+                        <td>
+                            @d_Agreement.Person.Position.Name
+                        </td>
+                        <td>
+                            @d_Agreement.Person.LineFIO()
+                        </td>
+                        <td style="text-align:center">
+                            @{
+                                string sAccept = d_Agreement.Accept ? "да" : "нет", sDate = "";
+                                if (d_Agreement.Info != null) { sDate = "(" + d_Agreement.Info.Split('/')[0] + ")"; }
+                            }
+                            @sAccept @sDate
+                        </td>
+                        <td>
+                            @d_Agreement.Note
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}
+<hr />
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a> |
-    @if (ViewBag.fileName != null)
+    @if (Model.State == (int)Stat.Edit)
     {
-    <a asp-action="CreateAct" asp-route-id="@Model.Id" asp-route-type="agreement">Сформировать для согласования</a>@Html.Raw("|")
+        <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a> @Html.Raw("|")
+        if (ViewBag.fileName != null)
+        {
+            <a asp-action="CreateAct" asp-route-id="@Model.Id" asp-route-type="agreement">Сформировать для согласования</a> @Html.Raw("|")
+        }
+    }
+    @if (Model.State == (int)Stat.Accepted)
+    {
+        <a asp-action="CreateAct" asp-route-id="@Model.Id" asp-route-type="completed">выдать акт</a> @Html.Raw("|")
     }
     <a asp-action="Ind_edit">Назад к списку</a>
 </div>

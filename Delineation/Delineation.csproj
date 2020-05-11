@@ -5,19 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200423083529_status3.cs" />
-    <Compile Remove="Migrations\20200423083529_status3.Designer.cs" />
-    <Compile Remove="Migrations\20200423134529_agreement.cs" />
-    <Compile Remove="Migrations\20200423134529_agreement.Designer.cs" />
-    <Compile Remove="Migrations\20200423134817_agreement2.cs" />
-    <Compile Remove="Migrations\20200423134817_agreement2.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="Views\D_Act\Agreement.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
   </ItemGroup>
   
@@ -31,7 +18,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
     <PackageReference Include="NPetrovich" Version="1.2.0" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.60" />
   </ItemGroup>

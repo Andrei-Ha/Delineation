@@ -11,6 +11,9 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model=>model.State)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Date)
             </th>
             <th>
@@ -35,7 +38,10 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+        <tr class="@D_Act.CssClassStat(item.State)">
+            <td>
+                @D_Act.CyrStat(item.State)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
@@ -55,9 +61,19 @@
                 @Html.DisplayFor(model => item.Tc.Address)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">изменить</a>   <br />
+                @if (item.State == 0 || item.State == 2)
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id">изменить</a><br />
+                }
                 <a asp-action="Details" asp-route-id="@item.Id">подробно</a> <br />
-                <a asp-action="Delete" asp-route-id="@item.Id">удалить</a>
+                @if (item.State == 0)
+                {
+                    <a asp-action="Delete" asp-route-id="@item.Id">удалить</a>
+                }
+                else
+                {
+                    <a asp-action="Delete" asp-route-id="@item.Id">.</a>
+                }
             </td>
         </tr>
 }

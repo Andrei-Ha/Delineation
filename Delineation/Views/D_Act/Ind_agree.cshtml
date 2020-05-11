@@ -32,16 +32,13 @@
             <th>
 
             </th>
-            <th>
-
-            </th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
     string link_html = "../Output/html/" + item.Id + ".html";
     string link_png = "../Output/png/" + item.Id + ".png";
-        <tr>
+        <tr class="inagreement">
             <td>
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
@@ -61,13 +58,7 @@
                 @Html.DisplayFor(model => item.Tc.Address)
             </td>
             <td>
-                <a href="@link_html" rel="noopener noreferrer" target="_blank">содержание</a>
-            </td>
-            <td>
-                <a href="@link_png" rel="noopener noreferrer" target="_blank">схема</a>
-            </td>
-            <td>
-
+                <a asp-action="Agreement" asp-route-id="@item.Id">согласование</a>
             </td>
         </tr>
 }

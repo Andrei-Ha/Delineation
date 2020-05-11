@@ -6,12 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Delineation.Models;
+using Microsoft.Data.SqlClient;
 
 namespace Delineation.Controllers
 {
     public class D_PersonController : Controller
     {
         private readonly DelineationContext _context;
+        private string ConnStringSql = "Server=Pirr2n; database=pinskbase; User Id = ppinsk; Password=pes";
 
         public D_PersonController(DelineationContext context)
         {
@@ -21,7 +23,7 @@ namespace Delineation.Controllers
         // GET: D_Person
         public async Task<IActionResult> Index()
         {
-            return View(await _context.D_Persons.Where(p => p.Id != 1).ToListAsync());
+            return View(await _context.D_Persons.ToListAsync());
         }
 
         // GET: D_Person/Details/5
@@ -45,6 +47,25 @@ namespace Delineation.Controllers
         // GET: D_Person/Create
         public IActionResult Create()
         {
+            List<SelList> myList = new List<SelList>();
+            using (SqlConnection con = new SqlConnection(ConnStringSql))
+            {
+                using (SqlCommand cmd = con.CreateCommand())
+                {
+                    con.Open();
+                    cmd.CommandText = "select fio, name1, name2, (cex + cex1) as kod, linom from dbo.delo_s_fio";
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+
+                        myList.Add(new SelList() { Id = reader["fio"].ToString() + ";" + reader["name1"].ToString() + ";" + reader["name2"].ToString() + ";" + reader["kod"].ToString() + ";" + reader["linom"].ToString(), Text = reader["fio"].ToString() + " " + reader["name1"].ToString() + " " + reader["name2"].ToString() });
+                    }
+                    reader.Dispose();
+                }
+            }
+            ViewData["FIO"] = new SelectList(myList, "Id", "Text");
+            var positions = _context.Positions.ToList();
+            ViewData["Positions"] = new SelectList(positions, "Id", "Name");
             return View();
         }
 
@@ -53,15 +74,21 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Surname,Name,Patronymic")] D_Person d_Person)
+        public async Task<IActionResult> Create(string strFIO, int PositionId)
         {
-            if (ModelState.IsValid)
+            D_Person person = new D_Person()
             {
-                _context.Add(d_Person);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(d_Person);
+                Surname = strFIO.Split(';')[0],
+                Name = strFIO.Split(';')[1],
+                Patronymic = strFIO.Split(';')[2],
+                Kod_long = strFIO.Split(';')[3],
+                Linom = strFIO.Split(';')[4],
+                PositionId = PositionId
+            };
+            _context.Add(person);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: D_Person/Edit/5

@@ -2,8 +2,13 @@
 
 @{
     ViewData["Title"] = "Выданные акты";
+    List<Unit> units = ViewBag.sprpodrs;
 }
     <h1>Выданные акты</h1>
+@*@foreach(Unit s in units)
+{
+    @s.Naim <br />
+}*@
 <table class="table">
     <thead>
         <tr>
@@ -24,6 +29,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Tc.Address)
+            </th>
+            <th>
+
             </th>
             <th>
 
@@ -57,6 +65,9 @@
                     string link = "../Output/pdf/" + item.Id + ".pdf";
                     <a href="@link" rel="noopener noreferrer" target="_blank">посмотреть</a>
                 }
+            </td>
+            <td>
+                <a asp-action="Delete" asp-route-id="@item.Id">.</a>
             </td>
         </tr>
 }

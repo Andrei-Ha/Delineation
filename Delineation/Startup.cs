@@ -57,7 +57,7 @@ namespace Delineation
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=D_Act}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
