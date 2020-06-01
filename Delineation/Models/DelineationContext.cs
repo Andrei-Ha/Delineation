@@ -6,10 +6,12 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Delineation.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using CustomIdentity.Models;
 
 namespace Delineation.Models
 {
-    public class DelineationContext : DbContext
+    public class DelineationContext : IdentityDbContext<User>//DbContext
     {
         public DbSet<D_Res> D_Reses { get; set; }
         public DbSet<D_Person> D_Persons { get; set; }

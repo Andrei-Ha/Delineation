@@ -4,14 +4,16 @@ using Delineation.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Delineation.Migrations
 {
     [DbContext(typeof(DelineationContext))]
-    partial class DelineationContextModelSnapshot : ModelSnapshot
+    [Migration("20200525105409_add_auth")]
+    partial class add_auth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -470,10 +472,6 @@ namespace Delineation.Migrations
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
-
-                    b.Property<string>("AbonNum")
-                        .HasColumnType("nvarchar(7)")
-                        .HasMaxLength(7);
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(250)")

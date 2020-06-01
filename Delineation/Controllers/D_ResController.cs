@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Delineation.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Delineation.Controllers
 {
+    [Authorize(Roles = "operatorDelineation")]
     public class D_ResController : Controller
     {
         private readonly DelineationContext _context;

@@ -10,6 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Delineation.Models;
+using Microsoft.AspNetCore.Identity;
+using CustomIdentity.Models;
+
 
 namespace Delineation
 {
@@ -29,6 +32,28 @@ namespace Delineation
             //string connString = Configuration.GetConnectionString("ConnectionAndr-SQL");
             string connString = Configuration.GetConnectionString("ConnectionPirr2n");
             services.AddDbContext<DelineationContext>(options => options.UseSqlServer(connString));
+            //identity
+            services.AddIdentity<User, IdentityRole>(oopt =>
+            {
+                oopt.Password.RequiredLength = 4;   // минимальна€ длина
+                oopt.Password.RequireNonAlphanumeric = false;   // требуютс€ ли не алфавитно-цифровые символы
+                oopt.Password.RequireLowercase = false; // требуютс€ ли символы в нижнем регистре
+                oopt.Password.RequireUppercase = false; // требуютс€ ли символы в верхнем регистре
+                oopt.Password.RequireDigit = false; // требуютс€ ли цифры
+                //oopt.User.AllowedUserNameCharacters = null; // допускает любые символы в имени юсера
+                oopt.User.AllowedUserNameCharacters = "абвгдеЄжзийклмнопрстуфхцчщшъыьэю€јЅ¬√ƒ≈®∆«»… ЋћЌќѕ–—“”‘’÷„ўЎЏџ№Ёёя- ";
+            })
+                .AddEntityFrameworkStores<DelineationContext>()
+                .AddDefaultTokenProviders();
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                //options.Cookie.Name = "YourAppCookieName";
+                //options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.LoginPath = "/Identity/Account/Login";
+            });
+            //identity--end
             services.AddControllersWithViews();
         }
 
@@ -51,10 +76,15 @@ namespace Delineation
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapAreaControllerRoute(
+                    name: "Identity_area",
+                    areaName: "Identity",
+                    pattern: "identity/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

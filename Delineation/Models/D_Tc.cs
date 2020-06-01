@@ -30,6 +30,9 @@ namespace Delineation.Models
         [Display(Name = "ФИО заявителя"), Column(TypeName = "nvarchar(70)"), StringLength(70)]
         public string FIO { get; set; }
 
+        [Display(Name = "№ абонента"), Column(TypeName = "nvarchar(7)"), StringLength(7)]
+        public string AbonNum { get; set; }
+
         [Display(Name = "Наименование объекта"), Column(TypeName = "nvarchar(500)"), StringLength(500)]
         public string ObjName { get; set; }
 

@@ -1,0 +1,14 @@
+
+                <svg id="MySvg" style="display:inline-block" class="MySvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" onload="makeDraggable(evt)">
+                    <line id="nachalo" class="bottom"></line>
+
+                        <line class="draggable" x1="0" y1="0" x2="50" y2="0" stroke-width="2" stroke="red" transform="translate(659.88 254.79)"></line>
+                        <line class="draggable" x1="0" y1="0" x2="50" y2="0" stroke-width="2" stroke="blue" transform="translate(660.778 265.269)"></line>
+                        <text class="draggable top" x="0" y="0" transform="translate(30 30)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ПС ЛОСИЧИ-110 (инв.№ 454762)</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(44.0719 50.3593)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ВЛ 10кВ №328 (инв.№ 863441)</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(132.695 129.102)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">КТП-107 (инв.№ 4767700)</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(363.234 184.491)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">ВЛ 1 (инв.№ 8433213)</text>
+                        <text class="draggable top" x="0" y="0" transform="translate(660.24 188.683)" text-anchor="start" style="font-size:15px" alignment-baseline="middle">оп.№ 15</text>
+                    <rect id="konec" class="top" x="0" y="0" width="900" height="600" stroke="black" stroke-width="2" fill="none"></rect>
+                </svg>
+            

@@ -11,6 +11,8 @@
   <ItemGroup>
     <PackageReference Include="GemBox.Document" Version="31.0.0.1130" />
     <PackageReference Include="GemBox.Spreadsheet" Version="45.0.0.1094" />
+    <PackageReference Include="MailKit" Version="2.6.0" />
+    <PackageReference Include="Microsoft.aspnetcore.identity.entityframeworkcore" Version="3.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.1" />
     <PackageReference Include="microsoft.entityframeworkcore.sqlserver" Version="3.1.2" />
     <PackageReference Include="microsoft.entityframeworkcore.tools" Version="3.1.2">

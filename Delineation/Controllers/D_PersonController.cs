@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Delineation.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Delineation.Controllers
 {
+    [Authorize(Roles = "operatorDelineation")]
     public class D_PersonController : Controller
     {
         private readonly DelineationContext _context;

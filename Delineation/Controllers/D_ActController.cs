@@ -16,6 +16,7 @@ using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using System.Net;
 using NPetrovich;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Delineation.Controllers
 {
@@ -31,6 +32,7 @@ namespace Delineation.Controllers
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
+        [Authorize(Roles = "employee")]
         public async Task<IActionResult> Agreement(int? id)
         {
             if (id != null)
@@ -45,6 +47,7 @@ namespace Delineation.Controllers
             }
             
         }
+        [Authorize(Roles = "employee")]
         [HttpPost]
         public async Task<IActionResult> Agreement(int Act_id, int agree, int Agr_id, string Note)
         {
@@ -67,6 +70,7 @@ namespace Delineation.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Ind_agree");
         }
+        [Authorize(Roles = "operatorDelineation")]
         public async Task<IActionResult> Drawing(int? id )
         {
             List<string> list_svg = new List<string>();
@@ -161,6 +165,7 @@ namespace Delineation.Controllers
             //List<string> list_ext0 = new List<string>( new string[] { "png", "jpg", "jpeg" });
             //List<string> list_ext = new List<string> { ".png", ".jpg", ".jpeg" };
         }
+        [Authorize(Roles = "operatorDelineation")]
         [HttpPost]
         //[RequestSizeLimit(40000000)]
         public IActionResult SavePNG(string png, string svg, string raw, int id)
@@ -224,6 +229,7 @@ namespace Delineation.Controllers
             var delineationContext = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p=>p.Nach).Where(p => p.State == (int)Stat.Completed);
             return View(await delineationContext.ToListAsync());
         }
+        [Authorize(Roles = "employee")]
         public async Task<IActionResult> Ind_agree()
         {
             var delineationContext = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p => p.State == (int)Stat.InAgreement);
@@ -235,6 +241,7 @@ namespace Delineation.Controllers
             return View(await delineationContext.ToListAsync());
         }
         // GET: D_Act/Details/5
+        [Authorize(Roles = "operatorDelineation")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -258,6 +265,7 @@ namespace Delineation.Controllers
         }
 
         // GET: D_Act/Create
+        [Authorize(Roles = "operatorDelineation")]
         public IActionResult Create()
         {
             List<SelList> myList = new List<SelList>();
@@ -279,7 +287,7 @@ namespace Delineation.Controllers
             //ViewData["TcId"] = new SelectList(_context.D_Tces.OrderBy(p => p.Date).Select(p => new { Id = p.Id, text = "№" + p.Num + " от " + p.Date.ToString("dd.MM.yyyy") + "; " + p.FIO + "; " + p.Address }), "Id", "text");
             return View();
         }
-
+        [Authorize(Roles = "operatorDelineation")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int TcId)
@@ -291,7 +299,7 @@ namespace Delineation.Controllers
                 using (SqlCommand cmd = con.CreateCommand())
                 {
                     con.Open();
-                    cmd.CommandText = "select kluch,n_tu, d_tu,kod_podr,fio,name_ob,adress_ob,p_all,name_ps,n_tp,typ_tp,n_vl,typ_vl,n_op,p_kat1,p_kat2,p_kat3 from dbo.tu_all where kluch=" + TcId.ToString();
+                    cmd.CommandText = "select kluch,n_tu, d_tu,kod_podr,fio,num_abonent,name_ob,adress_ob,p_all,name_ps,n_tp,typ_tp,n_vl,typ_vl,n_op,p_kat1,p_kat2,p_kat3 from dbo.tu_all where kluch=" + TcId.ToString();
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
@@ -300,6 +308,7 @@ namespace Delineation.Controllers
                         if(reader["d_tu"].ToString().Length >= 10) tc.Date = DateTime.Parse(reader["d_tu"].ToString());
                         tc.ResId = Convert.ToInt32(reader["kod_podr"]);
                         tc.FIO = reader["fio"].ToString();
+                        tc.AbonNum = reader["num_abonent"].ToString();
                         tc.ObjName = reader["name_ob"].ToString();
                         tc.Address = reader["adress_ob"].ToString();
                         tc.Pow = reader["p_all"].ToString();
@@ -398,20 +407,11 @@ namespace Delineation.Controllers
             _context.D_Acts.Add(new D_Act { Tc=tc , StrPSline10=str.Substring(0,str.Length-1)});
             _context.SaveChanges();
             D_Act act = _context.D_Acts.ToList().LastOrDefault(p => p.TcId == TcId);
-            // отметка о выдаче акта на основании выданного ТУ в dbo.TU_ALL
-            using (SqlConnection con = new SqlConnection(ConnStringSql))
-            {
-                using (SqlCommand cmd = con.CreateCommand())
-                {
-                    con.Open();
-                    cmd.CommandText = "UPDATE dbo.TU_ALL SET del=3, n_akt=" + act.Id + ", del_date=SYSDATETIME() WHERE kluch=" + TcId.ToString();
-                    var Result = cmd.ExecuteNonQuery();
-                }
-            }
             return RedirectToAction(nameof(Edit), act);
         }
 
         // GET: D_Act/Edit/5
+        [Authorize(Roles = "operatorDelineation")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -431,6 +431,7 @@ namespace Delineation.Controllers
         // POST: D_Act/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "operatorDelineation")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, string FIOcons, [Bind("Id,Date,TcId,IsEntity,EntityDoc,ConsBalance,DevBalance,ConsExpl,DevExpl,IsTransit,FIOtrans,Validity,Temp,StrPSline10")] D_Act d_Act)
@@ -470,6 +471,7 @@ namespace Delineation.Controllers
         }
 
         // GET: D_Act/Delete/5
+        [Authorize(Roles = "operatorDelineation")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -490,6 +492,7 @@ namespace Delineation.Controllers
         }
 
         // POST: D_Act/Delete/5
+        [Authorize(Roles = "operatorDelineation")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -537,6 +540,7 @@ namespace Delineation.Controllers
         {
             return _context.D_Acts.Any(e => e.Id == id);
         }
+        [Authorize(Roles = "operatorDelineation")]
         public async Task<IActionResult> CreateAct(int id, string type)
         {
             _context.D_Persons.Load();
@@ -789,6 +793,16 @@ namespace Delineation.Controllers
                 doc.Save(path_docx);
                 doc.Save(path_pdf);
                 _context.D_Acts.FirstOrDefault(p => p.Id == act.Id).State = (int)Stat.Completed;
+                // отметка о выдаче акта на основании выданного ТУ в dbo.TU_ALL
+                using (SqlConnection con = new SqlConnection(ConnStringSql))
+                {
+                    using (SqlCommand cmd = con.CreateCommand())
+                    {
+                        con.Open();
+                        cmd.CommandText = "UPDATE dbo.TU_ALL SET del=3, n_akt=" + act.Id + ", del_date=SYSDATETIME() WHERE kluch=" + act.TcId.ToString();
+                        var Result = cmd.ExecuteNonQuery();
+                    }
+                }
             }
             else
             {
