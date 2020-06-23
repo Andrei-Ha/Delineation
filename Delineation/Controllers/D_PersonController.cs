@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Delineation.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
+using Oracle.ManagedDataAccess.Client;
+using Microsoft.Extensions.Configuration;
 
 namespace Delineation.Controllers
 {
@@ -15,11 +17,15 @@ namespace Delineation.Controllers
     public class D_PersonController : Controller
     {
         private readonly DelineationContext _context;
-        private string ConnStringSql = "Server=Pirr2n; database=pinskbase; User Id = ppinsk; Password=pes";
-
-        public D_PersonController(DelineationContext context)
+        private readonly IConfiguration _configuration;
+        private readonly string _oraclePirr2n;
+        private readonly string _mssqlPirr2n;
+        public D_PersonController(DelineationContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
+            _oraclePirr2n = _configuration.GetConnectionString("OraclePirr2n");
+            _mssqlPirr2n = _configuration.GetConnectionString("MSsqlPirr2n");
         }
 
         // GET: D_Person
@@ -50,13 +56,13 @@ namespace Delineation.Controllers
         public IActionResult Create()
         {
             List<SelList> myList = new List<SelList>();
-            using (SqlConnection con = new SqlConnection(ConnStringSql))
+            using (OracleConnection con = new OracleConnection(_oraclePirr2n))
             {
-                using (SqlCommand cmd = con.CreateCommand())
+                using (OracleCommand cmd = con.CreateCommand())
                 {
                     con.Open();
-                    cmd.CommandText = "select fio, name1, name2, (cex + cex1) as kod, linom from dbo.delo_s_fio";
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    cmd.CommandText = "select fio, name1, name2, (cex + cex1) as kod, linom from delo_s_fio";
+                    OracleDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
 

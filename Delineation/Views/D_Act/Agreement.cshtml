@@ -81,7 +81,7 @@ function includeHTML() {
             <tbody>
                 @foreach (D_Agreement d_Agreement in (List<D_Agreement>)ViewBag.Agreements)
                 {
-                    if (d_Agreement.PersonId == 4)
+                    if (d_Agreement.Person.Linom == ViewBag.LinomUser && d_Agreement.Info==null)
                     {
                 <tr style="background-color:lightgray">
                     <td>

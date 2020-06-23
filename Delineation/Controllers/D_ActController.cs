@@ -17,6 +17,7 @@ using Oracle.ManagedDataAccess.Types;
 using System.Net;
 using NPetrovich;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 
 namespace Delineation.Controllers
 {
@@ -24,13 +25,19 @@ namespace Delineation.Controllers
     {
         private readonly DelineationContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private string ConnStringOracle = "Data Source=//10.181.64.7/orcl7;User Id = sel;Password=2222";
-        private string ConnStringSql = "Server=Pirr2n; database=pinskbase; User Id = ppinsk; Password=pes";
+        private readonly IConfiguration _configuration;
+        private readonly string _oraclePirr2n;
+        private readonly string _mssqlPirr2n;
+        private readonly string _oraclePirr7sel;
 
-        public D_ActController(DelineationContext context, IWebHostEnvironment webHostEnvironment)
+        public D_ActController(DelineationContext context, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _configuration = configuration;
+            _oraclePirr2n = _configuration.GetConnectionString("OraclePirr2n");
+            _mssqlPirr2n = _configuration.GetConnectionString("MSsqlPirr2n");
+            _oraclePirr7sel = configuration.GetConnectionString("OraclePirr7sel");
         }
         [Authorize(Roles = "employee")]
         public async Task<IActionResult> Agreement(int? id)
@@ -39,6 +46,7 @@ namespace Delineation.Controllers
             {
                 var d_Act = await _context.D_Acts.Include(p => p.Tc).FirstOrDefaultAsync(p => p.Id == id);
                 ViewBag.Agreements = _context.D_Agreements.Include(p=>p.Person).ThenInclude(o=>o.Position).Where(p => p.ActId == id).ToList();
+                ViewBag.LinomUser = _context.Users.FirstOrDefault(p=>p.UserName==User.Identity.Name).Linom.ToString();
                 return View(d_Act);
             }
             else
@@ -53,13 +61,13 @@ namespace Delineation.Controllers
         {
             D_Agreement d_Agreement = await _context.D_Agreements.FirstOrDefaultAsync(o => o.Id == Agr_id);
             d_Agreement.Note = Note;
-            d_Agreement.Info = DateTime.Now.ToString("HH:mm dd.MM.yyyy") + "/" + "10.181.64.222";
+            d_Agreement.Info = DateTime.Now.ToString("HH:mm dd.MM.yyyy") + "/" + Request.HttpContext.Connection.RemoteIpAddress.ToString();
             if (agree == 0)
                 d_Agreement.Accept = false;
             else if (agree == 1)
                 d_Agreement.Accept = true;
             _context.SaveChanges();
-            D_Act d_Act = await _context.D_Acts.FirstOrDefaultAsync(p => p.Id == Act_id);
+            D_Act d_Act = await _context.D_Acts.Include(p=>p.Agreements).FirstOrDefaultAsync(p => p.Id == Act_id);
             if (d_Act.Agreements.All(p => p.Info != null))
             {
                 if (d_Act.Agreements.All(p => p.Accept == true))
@@ -261,6 +269,7 @@ namespace Delineation.Controllers
             {
                 return NotFound();
             }
+            ViewBag.listPerson = _context.D_Persons.Include(p=>p.Position).ToList();
                 return View(d_Act);
         }
 
@@ -269,7 +278,7 @@ namespace Delineation.Controllers
         public IActionResult Create()
         {
             List<SelList> myList = new List<SelList>();
-            using (SqlConnection con = new SqlConnection(ConnStringSql))
+            using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
             {
                 using (SqlCommand cmd = con.CreateCommand())
                 {
@@ -292,9 +301,11 @@ namespace Delineation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int TcId)
         {
+            if (await _context.D_Tces.FindAsync(TcId) != null)
+                return RedirectToAction(nameof(Create));
             string str_numTP = "",str="";
             D_Tc tc = new D_Tc();
-            using (SqlConnection con = new SqlConnection(ConnStringSql))
+            using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
             {
                 using (SqlCommand cmd = con.CreateCommand())
                 {
@@ -331,7 +342,7 @@ namespace Delineation.Controllers
             {
                 string path_vsd = _webHostEnvironment.WebRootPath + "\\Output\\vsd\\" + str_numTP + ".vsd";
                 string path_vsd038 = _webHostEnvironment.WebRootPath + "\\Output\\vsd038\\l" + str_numTP + ".vsd";
-                using (OracleConnection con = new OracleConnection(ConnStringOracle))
+                using (OracleConnection con = new OracleConnection(_oraclePirr7sel))
                 {
                     string doc_code = "";
                     using (OracleCommand cmd = con.CreateCommand())
@@ -500,7 +511,7 @@ namespace Delineation.Controllers
             D_Act d_Act = await _context.D_Acts.FindAsync(id);
             D_Tc d_Tc = await _context.D_Tces.FindAsync(d_Act.TcId);
             // удаление отметки о выдаче акта на основании выданного ТУ в dbo.TU_ALL
-            using (SqlConnection con = new SqlConnection(ConnStringSql))
+            using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
             {
                 using (SqlCommand cmd = con.CreateCommand())
                 {
@@ -540,8 +551,9 @@ namespace Delineation.Controllers
         {
             return _context.D_Acts.Any(e => e.Id == id);
         }
+        [HttpPost]
         [Authorize(Roles = "operatorDelineation")]
-        public async Task<IActionResult> CreateAct(int id, string type)
+        public async Task<IActionResult> CreateAct(int id, string type, List<string> personidList)
         {
             _context.D_Persons.Load();
             D_Act act = await _context.D_Acts.Include(p => p.Tc).ThenInclude(o => o.Res).Where(i => i.Id == id).FirstOrDefaultAsync();
@@ -551,9 +563,11 @@ namespace Delineation.Controllers
                 // согласовать повторно
                 _context.D_Agreements.RemoveRange(_context.D_Agreements.Where(p => p.ActId == id));
                 //
-                _context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = 2, Accept = true, Info=DateTime.Now.ToString("HH:mm dd.MM.yyyy")+"/" +"10.181.64.222" });
-                _context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = 3, Accept = true, Info = DateTime.Now.ToString("HH:mm dd.MM.yyyy") + "/" + "10.181.64.222" });
-                _context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = 4 });
+                foreach (string personid in personidList)
+                {
+                    //_context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = 2, Accept = true, Info=DateTime.Now.ToString("HH:mm dd.MM.yyyy")+"/" +"10.181.64.222" });
+                    _context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = Convert.ToInt32(personid) });
+                }
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Ind_edit));
             }
@@ -794,7 +808,7 @@ namespace Delineation.Controllers
                 doc.Save(path_pdf);
                 _context.D_Acts.FirstOrDefault(p => p.Id == act.Id).State = (int)Stat.Completed;
                 // отметка о выдаче акта на основании выданного ТУ в dbo.TU_ALL
-                using (SqlConnection con = new SqlConnection(ConnStringSql))
+                using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
                 {
                     using (SqlCommand cmd = con.CreateCommand())
                     {

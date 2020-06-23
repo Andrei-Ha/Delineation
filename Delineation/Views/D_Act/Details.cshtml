@@ -1,9 +1,10 @@
 ﻿@model Delineation.Models.D_Act
 @{
     ViewData["Title"] = "Подробно";
+    List<string> listOfRes = new List<string>() { "541000", "542000", "543000", "544000", "545000", "546000" };
 }
 
-    <h1>Подробно</h1>
+<h1>Подробно</h1>
 
 <div>
     <h4>Акты</h4>
@@ -183,7 +184,7 @@
         border-radius: 15px;
         border: 1px solid blue;
         display: block;
-        padding:10px;
+        padding: 10px;
     }
 </style>
 @if (Model.Agreements.Count > 0)
@@ -233,19 +234,34 @@
         </table>
     </fieldset>
 }
-<hr />
-<div>
-    @if (Model.State == (int)Stat.Edit)
-    {
-        <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a> @Html.Raw("|")
-        if (ViewBag.fileName != null)
+@if (Model.State == (int)Stat.Edit && ViewBag.fileName != null)
+{
+<form asp-action="CreateAct" method="post" asp-route-id="">
+    <fieldset style="width:100%;">
+        <legend style="color:blue">Лист согласования:</legend>
+        @foreach (D_Person person in ViewBag.listPerson)
+            {
+                    <input type="checkbox" id="@person.Id" name="personidList" value="@person.Id" @if (listOfRes.Contains(person.Kod_long)) { @Html.Raw("checked=\"checked\"") ; } />
+                    <label for="@person.Id">@person.Position.Name (@person.LineFIO())</label><br />
+            }
+
+            </fieldset>
+    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="hidden" name="type" value="agreement" />
+    <input type="submit" value="Сформировать для согласования" />
+</form>
+}
+    <hr />
+    <div>
+        @if (Model.State == (int)Stat.Edit)
         {
-            <a asp-action="CreateAct" asp-route-id="@Model.Id" asp-route-type="agreement">Сформировать для согласования</a> @Html.Raw("|")
+            <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a> @Html.Raw("|")
         }
-    }
-    @if (Model.State == (int)Stat.Accepted)
-    {
-        <a asp-action="CreateAct" asp-route-id="@Model.Id" asp-route-type="completed">выдать акт</a> @Html.Raw("|")
-    }
-    <a asp-action="Ind_edit">Назад к списку</a>
-</div>
+        @if (Model.State == (int)Stat.Accepted)
+        {
+    <form asp-action="CreateAct" asp-route-id="@Model.Id" asp-route-type="completed">
+        <input type="submit" value="Выдать акт" />
+    </form>
+        }
+        <a asp-action="Ind_edit">Назад к списку</a>
+    </div>
