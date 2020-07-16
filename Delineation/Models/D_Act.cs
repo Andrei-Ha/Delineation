@@ -62,6 +62,8 @@ namespace Delineation.Models
         [NotMapped]
         public string Temp { get; set; }
 
+        public string Info { get; set; }
+
         public string StrPSline10 { get; set; }
 
         //метод определения статуса

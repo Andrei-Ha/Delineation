@@ -105,8 +105,26 @@ namespace CustomIdentity.Areas.Identity.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public async Task<IActionResult> Login(string returnUrl = null)
         {
+            List<User> List_D_operator = new List<User>();
+            List<User> List_D_accepter = new List<User>();
+            List<User> List_All = _userManager.Users.OrderBy(p => p.UserName).ToList();
+            // формирование списка всех пользователей, которые имеют отношение к задаче Delineation (префикс "D_")
+            foreach(User user in List_All)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                foreach (string role in roles)
+                {
+                    if (role == "D_operator")
+                        List_D_operator.Add(user);
+                    if (role == "D_accepter")
+                        List_D_accepter.Add(user);
+                }
+            }
+            ViewBag.list_operator = List_D_operator;
+            ViewBag.list_accepter = List_D_accepter;
+            ViewBag.list_other = List_All.Except<User>(List_D_operator).Except<User>(List_D_accepter).ToList<User>();
             return View(new LoginViewModel() { ReturnUrl = returnUrl });
         }
         [HttpPost]

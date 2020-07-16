@@ -4,7 +4,7 @@
     ViewData["Title"] = "Выданные акты";
     List<Unit> units = ViewBag.sprpodrs;
 }
-    <h1>Выданные акты</h1>
+    <h1 style="color:#0000CD;">Выданные акты</h1>
 @*@foreach(Unit s in units)
 {
     @s.Naim <br />
@@ -36,6 +36,9 @@
             <th>
 
             </th>
+            <th>
+
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -60,11 +63,12 @@
                 @Html.DisplayFor(model => item.Tc.Address)
             </td>
             <td>
-                @if (((List<string>)ViewBag.fileNames).Any(p => p == item.Id.ToString()))
-                {
-                    string link = "../Output/pdf/" + item.Id + ".pdf";
+                @{string link = "../Output/pdf_signed/" + item.Id + "_sign.pdf";
                     <a href="@link" rel="noopener noreferrer" target="_blank">посмотреть</a>
                 }
+            </td>
+            <td>
+                <a asp-action="Agreement" asp-route-id="@item.Id">согласовали</a>
             </td>
             <td>
                 <a asp-action="Delete" asp-route-id="@item.Id">.</a>

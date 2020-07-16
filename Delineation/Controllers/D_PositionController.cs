@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Delineation.Controllers
 {
-    [Authorize(Roles = "operatorDelineation")]
+    [Authorize(Roles = "D_operator")]
     public class D_PositionController : Controller
     {
         private readonly DelineationContext _context;

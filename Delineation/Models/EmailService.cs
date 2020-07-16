@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using MimeKit;
 using MailKit.Net.Smtp;
 
-namespace CustomIdentity.Models
+namespace Delineation.Models
 {
     public class EmailService
     {
@@ -13,7 +13,7 @@ namespace CustomIdentity.Models
         {
             var emailMessage = new MimeMessage();
 
-            emailMessage.From.Add(new MailboxAddress("Администрация сайта", "asgoreglyad@brestenergo.by"));
+            emailMessage.From.Add(new MailboxAddress("Администратор Пинских ЭС", "asgoreglyad@brestenergo.by"));
             emailMessage.To.Add(new MailboxAddress("", email));
             emailMessage.Subject = subject;
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)

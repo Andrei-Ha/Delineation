@@ -21,5 +21,6 @@ namespace Delineation.Models
         public DateTime Date { get; set; }
         [Display(Name = "информация"), Column(TypeName = "nvarchar(100)"), StringLength(100)]
         public string Info { get; set; }
+        public bool Notice { get; set; }
     }
 }

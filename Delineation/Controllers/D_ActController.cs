@@ -18,6 +18,7 @@ using System.Net;
 using NPetrovich;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
+using CustomIdentity.Models;
 
 namespace Delineation.Controllers
 {
@@ -39,14 +40,14 @@ namespace Delineation.Controllers
             _mssqlPirr2n = _configuration.GetConnectionString("MSsqlPirr2n");
             _oraclePirr7sel = configuration.GetConnectionString("OraclePirr7sel");
         }
-        [Authorize(Roles = "employee")]
+        //[Authorize(Roles = "D_accepter")]
         public async Task<IActionResult> Agreement(int? id)
         {
             if (id != null)
             {
                 var d_Act = await _context.D_Acts.Include(p => p.Tc).FirstOrDefaultAsync(p => p.Id == id);
                 ViewBag.Agreements = _context.D_Agreements.Include(p=>p.Person).ThenInclude(o=>o.Position).Where(p => p.ActId == id).ToList();
-                ViewBag.LinomUser = _context.Users.FirstOrDefault(p=>p.UserName==User.Identity.Name).Linom.ToString();
+                ViewBag.LinomUser = _context.Users.FirstOrDefault(p=>p.UserName==User.Identity.Name)?.Linom.ToString();
                 return View(d_Act);
             }
             else
@@ -55,7 +56,7 @@ namespace Delineation.Controllers
             }
             
         }
-        [Authorize(Roles = "employee")]
+        [Authorize(Roles = "D_accepter")]
         [HttpPost]
         public async Task<IActionResult> Agreement(int Act_id, int agree, int Agr_id, string Note)
         {
@@ -71,14 +72,21 @@ namespace Delineation.Controllers
             if (d_Act.Agreements.All(p => p.Info != null))
             {
                 if (d_Act.Agreements.All(p => p.Accept == true))
+                {
                     d_Act.State = (int)Stat.Accepted;
+                    await _context.SaveChangesAsync();
+                    // вытягивание всех данных Акта для формирования печатной версии
+                    _context.D_Persons.Load();
+                    D_Act act = await _context.D_Acts.Include(p => p.Tc).ThenInclude(o => o.Res).FirstOrDefaultAsync(i => i.Id == Act_id);
+                    CreateDoc(act, "completed");
+                }
                 else
                     d_Act.State = (int)Stat.Rework;
+                    await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
             return RedirectToAction("Ind_agree");
         }
-        [Authorize(Roles = "operatorDelineation")]
+        [Authorize(Roles = "D_operator")]
         public async Task<IActionResult> Drawing(int? id )
         {
             List<string> list_svg = new List<string>();
@@ -173,7 +181,7 @@ namespace Delineation.Controllers
             //List<string> list_ext0 = new List<string>( new string[] { "png", "jpg", "jpeg" });
             //List<string> list_ext = new List<string> { ".png", ".jpg", ".jpeg" };
         }
-        [Authorize(Roles = "operatorDelineation")]
+        [Authorize(Roles = "D_operator")]
         [HttpPost]
         //[RequestSizeLimit(40000000)]
         public IActionResult SavePNG(string png, string svg, string raw, int id)
@@ -230,14 +238,14 @@ namespace Delineation.Controllers
         public async Task<IActionResult> Index()
         {
             ViewBag.sprpodrs = _context.Units.ToList();
-            string path_dir_pdf = _webHostEnvironment.WebRootPath + "\\Output\\pdf";
+            /*string path_dir_pdf = _webHostEnvironment.WebRootPath + "\\Output\\pdf_signed";
             DirectoryInfo directory = new DirectoryInfo(path_dir_pdf);
             List<string> fileNames = directory.GetFiles().Select(p=>p.Name.Split('.')[0]).ToList();
-            ViewBag.fileNames = fileNames;
+            ViewBag.fileNames = fileNames;*/
             var delineationContext = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p=>p.Nach).Where(p => p.State == (int)Stat.Completed);
             return View(await delineationContext.ToListAsync());
         }
-        [Authorize(Roles = "employee")]
+        //[Authorize(Roles = "D_accepter")]
         public async Task<IActionResult> Ind_agree()
         {
             var delineationContext = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p => p.State == (int)Stat.InAgreement);
@@ -245,11 +253,15 @@ namespace Delineation.Controllers
         }
         public async Task<IActionResult> Ind_edit()
         {
+            string path_dir_pdf = _webHostEnvironment.WebRootPath + "\\Output\\pdf";
+            DirectoryInfo directory = new DirectoryInfo(path_dir_pdf);
+            List<string> fileNames = directory.GetFiles().Select(p => p.Name.Split('.')[0]).ToList();
+            ViewBag.fileNames = fileNames;
             var delineationContext = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p=>(p.State==(int)Stat.Edit)|| (p.State == (int)Stat.InAgreement)|| (p.State == (int)Stat.Rework) || (p.State == (int)Stat.Accepted)).OrderBy(o=>o.State);
             return View(await delineationContext.ToListAsync());
         }
         // GET: D_Act/Details/5
-        [Authorize(Roles = "operatorDelineation")]
+        [Authorize(Roles = "D_operator")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -274,7 +286,7 @@ namespace Delineation.Controllers
         }
 
         // GET: D_Act/Create
-        [Authorize(Roles = "operatorDelineation")]
+        [Authorize(Roles = "D_operator")]
         public IActionResult Create()
         {
             List<SelList> myList = new List<SelList>();
@@ -296,7 +308,7 @@ namespace Delineation.Controllers
             //ViewData["TcId"] = new SelectList(_context.D_Tces.OrderBy(p => p.Date).Select(p => new { Id = p.Id, text = "№" + p.Num + " от " + p.Date.ToString("dd.MM.yyyy") + "; " + p.FIO + "; " + p.Address }), "Id", "text");
             return View();
         }
-        [Authorize(Roles = "operatorDelineation")]
+        [Authorize(Roles = "D_operator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int TcId)
@@ -415,14 +427,14 @@ namespace Delineation.Controllers
                 }
             }
             _context.D_Tces.Add(tc);
-            _context.D_Acts.Add(new D_Act { Tc=tc , StrPSline10=str.Substring(0,str.Length-1)});
+            _context.D_Acts.Add(new D_Act { Tc=tc , StrPSline10=str.Substring(0,str.Length-1), Info=FuncSetInfo("Create")});
             _context.SaveChanges();
             D_Act act = _context.D_Acts.ToList().LastOrDefault(p => p.TcId == TcId);
             return RedirectToAction(nameof(Edit), act);
         }
 
         // GET: D_Act/Edit/5
-        [Authorize(Roles = "operatorDelineation")]
+        [Authorize(Roles = "D_operator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -442,7 +454,7 @@ namespace Delineation.Controllers
         // POST: D_Act/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "operatorDelineation")]
+        [Authorize(Roles = "D_operator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, string FIOcons, [Bind("Id,Date,TcId,IsEntity,EntityDoc,ConsBalance,DevBalance,ConsExpl,DevExpl,IsTransit,FIOtrans,Validity,Temp,StrPSline10")] D_Act d_Act)
@@ -460,6 +472,7 @@ namespace Delineation.Controllers
                     d_Tc.Line10 = d_Act.Temp.Split(';')[0];
                     d_Tc.PS = d_Act.Temp.Split(';')[1];
                     d_Tc.FIO = FIOcons;
+                    d_Act.Info = _context.D_Acts.AsNoTracking().FirstOrDefault(o => o.Id == d_Act.Id).Info + FuncSetInfo("Edit");
                     _context.Update(d_Act);
                     await _context.SaveChangesAsync();
                 }
@@ -482,7 +495,7 @@ namespace Delineation.Controllers
         }
 
         // GET: D_Act/Delete/5
-        [Authorize(Roles = "operatorDelineation")]
+        [Authorize(Roles = "D_operator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -503,7 +516,7 @@ namespace Delineation.Controllers
         }
 
         // POST: D_Act/Delete/5
-        [Authorize(Roles = "operatorDelineation")]
+        [Authorize(Roles = "D_operator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -529,6 +542,7 @@ namespace Delineation.Controllers
             string path_html = webRootPath + "\\Output\\html\\" + id + ".html";
             string path_html_folder = webRootPath + "\\Output\\html\\" + id + "_files";
             string path_pdf = webRootPath + "\\Output\\pdf\\" + id + ".pdf";
+            string path_pdf_signed = webRootPath + "\\Output\\pdf_signed\\" + id + "_sign.pdf";
             string path_png = webRootPath + "\\Output\\png\\" + id + ".png";
             string path_svg = webRootPath + "\\Output\\svg\\" + id + ".svg";
             FileInfo docxToDel = new FileInfo(path_docx);
@@ -539,6 +553,8 @@ namespace Delineation.Controllers
             if (DirHtmlDel.Exists) DirHtmlDel.Delete(true);
             FileInfo pdfToDel = new FileInfo(path_pdf);
             if (pdfToDel.Exists) pdfToDel.Delete();
+            FileInfo signed_pdfToDel = new FileInfo(path_pdf_signed);
+            if (signed_pdfToDel.Exists) signed_pdfToDel.Delete();
             FileInfo pngToDel = new FileInfo(path_png);
             if (pngToDel.Exists) pngToDel.Delete();
             FileInfo svgToDel = new FileInfo(path_svg);
@@ -552,7 +568,7 @@ namespace Delineation.Controllers
             return _context.D_Acts.Any(e => e.Id == id);
         }
         [HttpPost]
-        [Authorize(Roles = "operatorDelineation")]
+        [Authorize(Roles = "D_operator")]
         public async Task<IActionResult> CreateAct(int id, string type, List<string> personidList)
         {
             _context.D_Persons.Load();
@@ -563,10 +579,28 @@ namespace Delineation.Controllers
                 // согласовать повторно
                 _context.D_Agreements.RemoveRange(_context.D_Agreements.Where(p => p.ActId == id));
                 //
+                EmailService emailService = new EmailService();
+                List<D_Person> persons = _context.D_Persons.ToList<D_Person>();
+                //List<User> users = _context.Users.ToList<User>();
+                string UrlAgreementLink = Url.Action("Agreement", "D_Act", new { id = id }, protocol: HttpContext.Request.Scheme);
+                string text_mail = string.Empty;
+                User user = new User();
+                bool notice = false;
                 foreach (string personid in personidList)
                 {
-                    //_context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = 2, Accept = true, Info=DateTime.Now.ToString("HH:mm dd.MM.yyyy")+"/" +"10.181.64.222" });
-                    _context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = Convert.ToInt32(personid) });
+                    notice = false;
+                    // формирование и отправка письма согласующему
+                    string linom = persons.FirstOrDefault(p => p.Id.ToString() == personid).Linom;
+                    user = _context.Users.FirstOrDefault(o => o.Linom.ToString() == linom);
+                    if (user != null) // рассылка только для зарегистрированных пользователей!!!
+                    {
+                        text_mail = $"{user.UserName}, перейдите пожалуйста по ссылке {UrlAgreementLink} для согласования АКТа разграничения балансовой принадлежности электросетей и эксплуатационной ответственности сторон. Составитель акта " + User.Identity.Name;
+                        // ! Заменить адрес asgoreglyad@brestenergo.by на user.Email
+                        await emailService.SendEmailAsync("asgoreglyad@brestenergo.by", "Важно! Согласование АКТа разграничения", text_mail);
+                        notice = true;
+                    }
+
+                        _context.D_Agreements.Add(new D_Agreement() { ActId = id, PersonId = Convert.ToInt32(personid), Notice=notice });
                 }
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Ind_edit));
@@ -806,17 +840,6 @@ namespace Delineation.Controllers
                 //---save---//
                 doc.Save(path_docx);
                 doc.Save(path_pdf);
-                _context.D_Acts.FirstOrDefault(p => p.Id == act.Id).State = (int)Stat.Completed;
-                // отметка о выдаче акта на основании выданного ТУ в dbo.TU_ALL
-                using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
-                {
-                    using (SqlCommand cmd = con.CreateCommand())
-                    {
-                        con.Open();
-                        cmd.CommandText = "UPDATE dbo.TU_ALL SET del=3, n_akt=" + act.Id + ", del_date=SYSDATETIME() WHERE kluch=" + act.TcId.ToString();
-                        var Result = cmd.ExecuteNonQuery();
-                    }
-                }
             }
             else
             {
@@ -824,6 +847,61 @@ namespace Delineation.Controllers
                 _context.D_Acts.FirstOrDefault(p => p.Id == act.Id).State = (int)Stat.InAgreement;
             }
             _context.SaveChanges();
+        }
+        public async Task<IActionResult> DownloadAct(List<IFormFile> postedFiles, int id)
+        {
+            string path = _webHostEnvironment.WebRootPath + "\\Output\\pdf_signed\\";
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            foreach (IFormFile postedFile in postedFiles)
+            {
+                string fileName_origin = Path.GetFileName(postedFile.FileName);
+                string ext = fileName_origin.Split('.')[1];
+                string fileName = id + "_sign." + ext;
+                if ("pdf" == ext.ToLower()) // проверка расширения
+                {
+                    using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                    {
+                        await postedFile.CopyToAsync(stream);
+                        ViewBag.FileName = fileName;
+                        ViewBag.Message += string.Format("<b>{0}</b> загружен.<br />", fileName_origin);
+                    }
+                }
+            }
+            //блок, который выполнится после закачки подписанного акта
+            D_Act act = _context.D_Acts.FirstOrDefault(p => p.Id == id);
+            act.State = (int)Stat.Completed;
+            _context.SaveChanges();
+            // отметка о выдаче акта на основании выданного ТУ в dbo.TU_ALL
+            using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
+                {
+                    using (SqlCommand cmd = con.CreateCommand())
+                    {
+                        con.Open();
+                        cmd.CommandText = "UPDATE dbo.TU_ALL SET del=3, n_akt=" + id.ToString() + ", del_date=SYSDATETIME() WHERE kluch=" + act.TcId.ToString();
+                        var Result = cmd.ExecuteNonQuery();
+                    }
+                }
+            ///-V удаление уже не нужных файлов
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            string path_docx = webRootPath + "\\Output\\docx\\" + id + ".docx";
+            string path_html = webRootPath + "\\Output\\html\\" + id + ".html";
+            string path_png = webRootPath + "\\Output\\png\\" + id + ".png";
+            string path_svg = webRootPath + "\\Output\\svg\\" + id + ".svg";
+            FileInfo docxToDel = new FileInfo(path_docx);
+            if (docxToDel.Exists) docxToDel.Delete();
+            FileInfo htmlToDel = new FileInfo(path_html);
+            FileInfo pngToDel = new FileInfo(path_png);
+            if (pngToDel.Exists) pngToDel.Delete();
+            FileInfo svgToDel = new FileInfo(path_svg);
+            if (svgToDel.Exists) svgToDel.Delete();
+            DeleteAllImageById(id, "0");
+            ///-A удаление уже не нужных файлов
+            return RedirectToAction("Index","D_Act");
+        }
+        private string FuncSetInfo(string operation)
+        {
+
+            return DateTime.Now.ToString("HH:mm dd.MM.yyyy") + "/" + Request.HttpContext.Connection.RemoteIpAddress.ToString() +"/" + User.Identity.Name+  "/" + operation + ";";
         }
     }
 }

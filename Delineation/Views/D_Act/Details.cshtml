@@ -200,17 +200,21 @@
                     <th width="25%">
                         ФИО
                     </th>
-                    <th width="25%" style="text-align:center">
+                    <th width="20%" style="text-align:center">
                         согласовано
                     </th>
-                    <th width="25%">
+                    <th width="20%">
                         замечания
+                    </th>
+                    <th width="10%">
+                        уведомление на e-mail
                     </th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (D_Agreement d_Agreement in Model.Agreements)
                 {
+                    string notice = d_Agreement.Notice ? "<i style=\"color:green\">да<i>" : "<i style=\"color:red\">нет<i>";
                     <tr>
                         <td>
                             @d_Agreement.Person.Position.Name
@@ -227,6 +231,9 @@
                         </td>
                         <td>
                             @d_Agreement.Note
+                        </td>
+                        <td>
+                            @Html.Raw(notice)
                         </td>
                     </tr>
                 }
@@ -259,8 +266,9 @@
         }
         @if (Model.State == (int)Stat.Accepted)
         {
-    <form asp-action="CreateAct" asp-route-id="@Model.Id" asp-route-type="completed">
-        <input type="submit" value="Выдать акт" />
+    <form asp-action="DownloadAct" asp-route-id="@Model.Id" enctype="multipart/form-data">
+        <input id="upload" type="file" name="postedFiles" accept="application/pdf" />
+        <input type="submit" value="Закачать подписанный акт" />
     </form>
         }
         <a asp-action="Ind_edit">Назад к списку</a>

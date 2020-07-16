@@ -13,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Delineation.Controllers
 {
-    [Authorize(Roles = "operatorDelineation")]
+    [Authorize(Roles = "D_operator")]
     public class D_PersonController : Controller
     {
         private readonly DelineationContext _context;
