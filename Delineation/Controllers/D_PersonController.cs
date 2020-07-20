@@ -31,7 +31,7 @@ namespace Delineation.Controllers
         // GET: D_Person
         public async Task<IActionResult> Index()
         {
-            return View(await _context.D_Persons.ToListAsync());
+            return View(await _context.D_Persons.Include(p=>p.Position).ToListAsync());
         }
 
         // GET: D_Person/Details/5
@@ -42,7 +42,7 @@ namespace Delineation.Controllers
                 return NotFound();
             }
 
-            var d_Person = await _context.D_Persons
+            var d_Person = await _context.D_Persons.Include(o=>o.Position)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (d_Person == null)
             {
@@ -112,6 +112,8 @@ namespace Delineation.Controllers
             {
                 return NotFound();
             }
+            var positions = _context.Positions.ToList();
+            ViewData["Positions"] = new SelectList(positions, "Id", "Name",d_Person.PositionId);
             return View(d_Person);
         }
 
@@ -120,7 +122,7 @@ namespace Delineation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Surname,Name,Patronymic")] D_Person d_Person)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Surname,Name,Patronymic,PositionId")] D_Person d_Person)
         {
             if (id != d_Person.Id)
             {

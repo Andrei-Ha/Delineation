@@ -594,7 +594,7 @@ namespace Delineation.Controllers
                     user = _context.Users.FirstOrDefault(o => o.Linom.ToString() == linom);
                     if (user != null) // рассылка только для зарегистрированных пользователей!!!
                     {
-                        text_mail = $"{user.UserName}, перейдите пожалуйста по ссылке {UrlAgreementLink} для согласования АКТа разграничения балансовой принадлежности электросетей и эксплуатационной ответственности сторон. Составитель акта " + User.Identity.Name;
+                        text_mail = $"{user.UserName}, перейдите пожалуйста по ссылке {UrlAgreementLink} для согласования АКТа разграничения балансовой принадлежности электросетей и эксплуатационной ответственности сторон. Составитель акта {User.Identity.Name}";
                         // ! Заменить адрес asgoreglyad@brestenergo.by на user.Email
                         await emailService.SendEmailAsync("asgoreglyad@brestenergo.by", "Важно! Согласование АКТа разграничения", text_mail);
                         notice = true;
