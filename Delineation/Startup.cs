@@ -30,7 +30,8 @@ namespace Delineation
         {
             //string connString = Configuration.GetConnectionString("DefaultConnection");
             //string connString = Configuration.GetConnectionString("ConnectionAndr-SQL");
-            string connString = Configuration.GetConnectionString("ConnectionPirr2n");
+            //string connString = Configuration.GetConnectionString("ConnectionPirr2n");
+            string connString = Configuration.GetConnectionString("ConnectionPirr11");
             services.AddDbContext<DelineationContext>(options => options.UseSqlServer(connString));
             //identity
             services.AddIdentity<User, IdentityRole>(oopt =>

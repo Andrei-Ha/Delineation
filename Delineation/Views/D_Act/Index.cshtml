@@ -1,34 +1,57 @@
-﻿@model IEnumerable<Delineation.Models.D_Act>
+﻿@using Delineation.ViewModels
+@model ActsIndexViewModel
 
 @{
     ViewData["Title"] = "Выданные акты";
     List<Unit> units = ViewBag.sprpodrs;
 }
-    <h1 style="color:#0000CD;">Выданные акты</h1>
+<h1 style="color:#0000CD;">Выданные акты</h1>
 @*@foreach(Unit s in units)
-{
-    @s.Naim <br />
-}*@
+    {
+        @s.Naim <br />
+    }*@
+<form method="get">
+    <div class="form-inline">
+        <label>ФИО: </label>
+        <input name="fio" value="@Model.ActsFilterViewModel.SelectedFIO" class="form-control" />
+
+        <label>РЭС: </label>
+        <select name="res" asp-items="Model.ActsFilterViewModel.Reses" class="form-control"></select>
+
+        <input type="submit" value="Фильтр" class="btn btn-outline-dark" />
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Date)
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.ActsSortViewModel.DateSort)"
+                   asp-route-fio="@(Model.ActsFilterViewModel.SelectedFIO)"
+                   asp-route-res="@(Model.ActsFilterViewModel.SelectedRes)">Дата</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Tc.Res.Name)
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.ActsSortViewModel.ResSort)"
+                   asp-route-fio="@(Model.ActsFilterViewModel.SelectedFIO)"
+                   asp-route-res="@(Model.ActsFilterViewModel.SelectedRes)">
+                    РЭС
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Tc.Num)
+                № ТУ
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Tc.Date)
+                Дата выдачи ТУ
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Tc.FIO)
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.ActsSortViewModel.FioSort)"
+                   asp-route-fio="@(Model.ActsFilterViewModel.SelectedFIO)"
+                   asp-route-res="@(Model.ActsFilterViewModel.SelectedRes)">ФИО заявителя</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Tc.Address)
+                Адрес объекта строительства
             </th>
             <th>
 
@@ -42,38 +65,63 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tc.Res.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Tc.Num)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Tc.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Tc.FIO)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Tc.Address)
-            </td>
-            <td>
-                @{string link = "../Output/pdf_signed/" + item.Id + "_sign.pdf";
-                    <a href="@link" rel="noopener noreferrer" target="_blank">посмотреть</a>
-                }
-            </td>
-            <td>
-                <a asp-action="Agreement" asp-route-id="@item.Id">согласовали</a>
-            </td>
-            <td>
-                <a asp-action="Delete" asp-route-id="@item.Id">.</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Acts)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tc.Res.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Tc.Num)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Tc.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Tc.FIO)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Tc.Address)
+                </td>
+                <td>
+                    @{string link = "../Output/pdf_signed/" + item.Id + "_sign.pdf";
+                        <a href="@link" rel="noopener noreferrer" target="_blank">посмотреть</a>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Agreement" asp-route-id="@item.Id">согласовали</a>
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id">.</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+@if (Model.ActsPageViewModel.HasPreviousPage)
+{
+    <a asp-action="Index"
+       asp-route-page="@(Model.ActsPageViewModel.PageNumber - 1)"
+       asp-route-fio="@(Model.ActsFilterViewModel.SelectedFIO)"
+       asp-route-res="@(Model.ActsFilterViewModel.SelectedRes)"
+       asp-route-sortorder="@(Model.ActsSortViewModel.Current)"
+       class="btn  btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.ActsPageViewModel.HasNextPage)
+{
+    <a asp-action="Index"
+       asp-route-page="@(Model.ActsPageViewModel.PageNumber + 1)"
+       asp-route-fio="@(Model.ActsFilterViewModel.SelectedFIO)"
+       asp-route-res="@(Model.ActsFilterViewModel.SelectedRes)"
+       asp-route-sortorder="@(Model.ActsSortViewModel.Current)"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}

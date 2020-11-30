@@ -13,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Delineation.Controllers
 {
-    [Authorize(Roles = "D_operator")]
+    [Authorize(Roles = "admin")]
     public class D_PersonController : Controller
     {
         private readonly DelineationContext _context;
@@ -61,7 +61,7 @@ namespace Delineation.Controllers
                 using (OracleCommand cmd = con.CreateCommand())
                 {
                     con.Open();
-                    cmd.CommandText = "select fio, name1, name2, (cex + cex1) as kod, linom from delo_s_fio";
+                    cmd.CommandText = "select fio, name1, name2, (cex + cex1) as kod, linom from delo_s_fio order by fio,name1,name2";
                     OracleDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
@@ -84,6 +84,10 @@ namespace Delineation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string strFIO, int PositionId)
         {
+            if(string.IsNullOrEmpty(strFIO))
+            {
+                return RedirectToAction(nameof(Create));
+            }
             D_Person person = new D_Person()
             {
                 Surname = strFIO.Split(';')[0],

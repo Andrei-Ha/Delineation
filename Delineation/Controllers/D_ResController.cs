@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Delineation.Controllers
 {
-    [Authorize(Roles = "D_operator")]
+    [Authorize(Roles = "admin")]
     public class D_ResController : Controller
     {
         private readonly DelineationContext _context;

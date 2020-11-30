@@ -31,8 +31,7 @@ namespace CustomIdentity.Areas.Identity.Controllers
             _oraclePirr2n = _configuration.GetConnectionString("OraclePirr2n");
             _mssqlPirr2n = _configuration.GetConnectionString("MSsqlPirr2n");
         }
-        [HttpGet]
-        public IActionResult Register()
+        private object GetUsersList()
         {
             List<SelList> myList = new List<SelList>();
             using (OracleConnection con = new OracleConnection(_oraclePirr2n))
@@ -51,21 +50,12 @@ namespace CustomIdentity.Areas.Identity.Controllers
                     }
                 }
             }
-            /*using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
-            {
-                using (SqlCommand cmd = con.CreateCommand())
-                {
-                    con.Open();
-                    cmd.CommandText = "select m_linom,fio,login from dbo.mail where m_linom!=777777 order by fio";
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        myList.Add(new SelList() { Id = reader["m_linom"].ToString(), Text = "" + reader["fio"].ToString() + " - " + reader["login"].ToString() + "@brestenergo.by" });
-                    }
-                    reader.Dispose();
-                }
-            }*/
-            ViewData["Person"] = new SelectList(myList, "Id", "Text");
+            return new SelectList(myList, "Id", "Text");
+        }
+        [HttpGet]
+        public IActionResult Register()
+        {
+            ViewData["Person"] = GetUsersList();
             return View();
         }
         [HttpPost]
@@ -77,6 +67,7 @@ namespace CustomIdentity.Areas.Identity.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "D_accepter");
                     //await _signInManager.SignInAsync(user, false);
                     //return RedirectToAction("Index", "Home",new { Area = "" });
 
@@ -88,8 +79,8 @@ namespace CustomIdentity.Areas.Identity.Controllers
                         new { userId = user.Id, code = code },
                         protocol: HttpContext.Request.Scheme);
                     EmailService emailService = new EmailService();
-                    await emailService.SendEmailAsync(model.Email, "Confirm your account",
-                        $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>link</a>");
+                    await emailService.SendEmailAsync(model.Email, "Подтверждение вашего e-mail в программе \"Акты разграничений\"",
+                        $"Подтвердите регистрацию в программе \"Акты разграничений\", перейдя по ссылке: <a href='{callbackUrl}'>Ссылка</a>. \n Если Вы не регистрировались в программе, можете удалить это сообщение!");
 
                     return Content("Для завершения регистрации проверьте электронную почту и перейдите по ссылке, указанной в письме");
 
@@ -102,6 +93,7 @@ namespace CustomIdentity.Areas.Identity.Controllers
                     }
                 }
             }
+            ViewData["Person"] = GetUsersList();
             return View(model);
         }
         [HttpGet]

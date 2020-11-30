@@ -19,6 +19,7 @@ using NPetrovich;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using CustomIdentity.Models;
+using Delineation.ViewModels;
 
 namespace Delineation.Controllers
 {
@@ -232,18 +233,64 @@ namespace Delineation.Controllers
             }
             else { if(raw == "0") DeleteAllImageById(id, "0"); }
             var d_Act = _context.D_Acts.Include(p => p.Tc).ThenInclude(p => p.Res).FirstOrDefault(p => p.Id == id);
-            return RedirectToAction(nameof(Details),d_Act);
+            return RedirectToAction(nameof(Details),new { id=id});
         }
         // GET: D_Act
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index( int? res, string fio, int page=1, ASortState sortOrder = ASortState.DateAsc)
         {
             ViewBag.sprpodrs = _context.Units.ToList();
+            int pageSize = 2;
+            //фильтрация
+            IQueryable<D_Act> acts = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p => p.State == (int)Stat.Completed);
+
+            if (res != null && res != 0)
+            {
+                acts = acts.Where(p => p.Tc.ResId == res);
+            }
+            if (!String.IsNullOrEmpty(fio))
+            {
+                acts = acts.Where(p => p.Tc.FIO.Contains(fio));
+            }
+            // сортировка
+            switch (sortOrder)
+            {
+                case ASortState.DateDesc:
+                    acts = acts.OrderByDescending(s => s.Date);
+                    break;
+                case ASortState.ResAsc:
+                    acts = acts.OrderBy(s => s.Tc.Res.Name);
+                    break;
+                case ASortState.ResDesc:
+                    acts = acts.OrderByDescending(s => s.Tc.Res.Name);
+                    break;
+                case ASortState.FioAsc:
+                    acts = acts.OrderBy(s => s.Tc.FIO);
+                    break;
+                case ASortState.FioDesc:
+                    acts = acts.OrderByDescending(s => s.Tc.FIO);
+                    break;
+                default:
+                    acts = acts.OrderBy(s => s.Date);
+                    break;
+            }
+
+            // пагинация
+            var count = await acts.CountAsync();
+            var items = await acts.Skip((page - 1)*pageSize).Take(pageSize).ToListAsync();
+
+            // формируем модель представления
+            ActsIndexViewModel viewModel = new ActsIndexViewModel
+            {
+                ActsPageViewModel = new ActsPageViewModel(count, page, pageSize),
+                ActsSortViewModel = new ActsSortViewModel(sortOrder),
+                ActsFilterViewModel = new ActsFilterViewModel(_context.D_Reses.Select(p=>new SelList { Id = p.Id.ToString(), Text = p.Name }).ToList(), res, fio),
+                Acts = items
+            };
+            return View(viewModel);
             /*string path_dir_pdf = _webHostEnvironment.WebRootPath + "\\Output\\pdf_signed";
             DirectoryInfo directory = new DirectoryInfo(path_dir_pdf);
             List<string> fileNames = directory.GetFiles().Select(p=>p.Name.Split('.')[0]).ToList();
             ViewBag.fileNames = fileNames;*/
-            var delineationContext = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p=>p.Nach).Where(p => p.State == (int)Stat.Completed);
-            return View(await delineationContext.ToListAsync());
         }
         //[Authorize(Roles = "D_accepter")]
         public async Task<IActionResult> Ind_agree()
@@ -576,6 +623,7 @@ namespace Delineation.Controllers
             CreateDoc(act,type);
             if (type == "agreement")
             {
+                if (personidList.Count < 1) return RedirectToAction(nameof(Details), new { id = id });
                 // согласовать повторно
                 _context.D_Agreements.RemoveRange(_context.D_Agreements.Where(p => p.ActId == id));
                 //
@@ -850,29 +898,31 @@ namespace Delineation.Controllers
         }
         public async Task<IActionResult> DownloadAct(List<IFormFile> postedFiles, int id)
         {
-            string path = _webHostEnvironment.WebRootPath + "\\Output\\pdf_signed\\";
-            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-            foreach (IFormFile postedFile in postedFiles)
+            if (postedFiles.Count > 0)
             {
-                string fileName_origin = Path.GetFileName(postedFile.FileName);
-                string ext = fileName_origin.Split('.')[1];
-                string fileName = id + "_sign." + ext;
-                if ("pdf" == ext.ToLower()) // проверка расширения
+                string path = _webHostEnvironment.WebRootPath + "\\Output\\pdf_signed\\";
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                foreach (IFormFile postedFile in postedFiles)
                 {
-                    using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                    string fileName_origin = Path.GetFileName(postedFile.FileName);
+                    string ext = fileName_origin.Split('.')[1];
+                    string fileName = id + "_sign." + ext;
+                    if ("pdf" == ext.ToLower()) // проверка расширения
                     {
-                        await postedFile.CopyToAsync(stream);
-                        ViewBag.FileName = fileName;
-                        ViewBag.Message += string.Format("<b>{0}</b> загружен.<br />", fileName_origin);
+                        using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                        {
+                            await postedFile.CopyToAsync(stream);
+                            ViewBag.FileName = fileName;
+                            ViewBag.Message += string.Format("<b>{0}</b> загружен.<br />", fileName_origin);
+                        }
                     }
                 }
-            }
-            //блок, который выполнится после закачки подписанного акта
-            D_Act act = _context.D_Acts.FirstOrDefault(p => p.Id == id);
-            act.State = (int)Stat.Completed;
-            _context.SaveChanges();
-            // отметка о выдаче акта на основании выданного ТУ в dbo.TU_ALL
-            using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
+                //блок, который выполнится после закачки подписанного акта
+                D_Act act = _context.D_Acts.FirstOrDefault(p => p.Id == id);
+                act.State = (int)Stat.Completed;
+                _context.SaveChanges();
+                // отметка о выдаче акта на основании выданного ТУ в dbo.TU_ALL
+                using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
                 {
                     using (SqlCommand cmd = con.CreateCommand())
                     {
@@ -881,22 +931,24 @@ namespace Delineation.Controllers
                         var Result = cmd.ExecuteNonQuery();
                     }
                 }
-            ///-V удаление уже не нужных файлов
-            string webRootPath = _webHostEnvironment.WebRootPath;
-            string path_docx = webRootPath + "\\Output\\docx\\" + id + ".docx";
-            string path_html = webRootPath + "\\Output\\html\\" + id + ".html";
-            string path_png = webRootPath + "\\Output\\png\\" + id + ".png";
-            string path_svg = webRootPath + "\\Output\\svg\\" + id + ".svg";
-            FileInfo docxToDel = new FileInfo(path_docx);
-            if (docxToDel.Exists) docxToDel.Delete();
-            FileInfo htmlToDel = new FileInfo(path_html);
-            FileInfo pngToDel = new FileInfo(path_png);
-            if (pngToDel.Exists) pngToDel.Delete();
-            FileInfo svgToDel = new FileInfo(path_svg);
-            if (svgToDel.Exists) svgToDel.Delete();
-            DeleteAllImageById(id, "0");
-            ///-A удаление уже не нужных файлов
-            return RedirectToAction("Index","D_Act");
+                ///-V удаление уже не нужных файлов
+                string webRootPath = _webHostEnvironment.WebRootPath;
+                string path_docx = webRootPath + "\\Output\\docx\\" + id + ".docx";
+                string path_html = webRootPath + "\\Output\\html\\" + id + ".html";
+                string path_png = webRootPath + "\\Output\\png\\" + id + ".png";
+                string path_svg = webRootPath + "\\Output\\svg\\" + id + ".svg";
+                FileInfo docxToDel = new FileInfo(path_docx);
+                if (docxToDel.Exists) docxToDel.Delete();
+                FileInfo htmlToDel = new FileInfo(path_html);
+                FileInfo pngToDel = new FileInfo(path_png);
+                if (pngToDel.Exists) pngToDel.Delete();
+                FileInfo svgToDel = new FileInfo(path_svg);
+                if (svgToDel.Exists) svgToDel.Delete();
+                DeleteAllImageById(id, "0");
+                ///-A удаление уже не нужных файлов
+                return RedirectToAction("Index", "D_Act");
+            }
+            else return RedirectToAction("Details", "D_Act", new { id = id });
         }
         private string FuncSetInfo(string operation)
         {

@@ -36,21 +36,24 @@
 <hr />
 <a style="color:blue">Операторы:</a>
 <br />
-@foreach (User user in ViewBag.list_operator)
+@if (ViewBag.list_operator!=null)
 {
-    @Html.Raw(user.UserName + "<br />")
-}
-<a style="color:blue">Согласующие:</a>
-<br />
-@foreach (User user in ViewBag.list_accepter)
-{
-    @Html.Raw(user.UserName + "<br />")
-}
-<a style="color:blue">Зарегистрированные пользователи:</a>
-<br />
-@foreach (User user in ViewBag.list_other)
-{
-    @Html.Raw(user.UserName + "<br />")
+    foreach (User user in ViewBag.list_operator)
+    {
+        @Html.Raw(user.UserName + "<br />")
+    }
+    <a style="color:blue">Согласующие:</a>
+    <br />
+    foreach (User user in ViewBag.list_accepter)
+    {
+        @Html.Raw(user.UserName + "<br />")
+    }
+    <a style="color:blue">Зарегистрированные пользователи:</a>
+    <br />
+    foreach (User user in ViewBag.list_other)
+    {
+        @Html.Raw(user.UserName + "<br />")
+    }
 }
 <a style="color:orangered">Для получения дополнительных прав сообщите администратору по телефону 3-17</a>
 
