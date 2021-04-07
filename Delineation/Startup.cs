@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Delineation.Models;
 using Microsoft.AspNetCore.Identity;
 using CustomIdentity.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 
 
 namespace Delineation
@@ -61,6 +62,11 @@ namespace Delineation
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // this block added for run on Ngnix server
+            /*app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });*/
             /*if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

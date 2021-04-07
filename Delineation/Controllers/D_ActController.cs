@@ -239,7 +239,7 @@ namespace Delineation.Controllers
         public async Task<IActionResult> Index( int? res, string fio, int page=1, ASortState sortOrder = ASortState.DateAsc)
         {
             ViewBag.sprpodrs = _context.Units.ToList();
-            int pageSize = 2;
+            int pageSize = 5;
             //фильтрация
             IQueryable<D_Act> acts = _context.D_Acts.Include(d => d.Tc).ThenInclude(p => p.Res).ThenInclude(p => p.Nach).Where(p => p.State == (int)Stat.Completed);
 

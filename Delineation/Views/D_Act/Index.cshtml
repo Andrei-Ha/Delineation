@@ -11,15 +11,28 @@
         @s.Naim <br />
     }*@
 <form method="get">
-    <div class="form-inline">
-        <label>ФИО: </label>
-        <input name="fio" value="@Model.ActsFilterViewModel.SelectedFIO" class="form-control" />
-
-        <label>РЭС: </label>
-        <select name="res" asp-items="Model.ActsFilterViewModel.Reses" class="form-control"></select>
-
-        <input type="submit" value="Фильтр" class="btn btn-outline-dark" />
-    </div>
+    <table class="table-info" width="100%">
+        <tr style="text-align:center">
+            <td colspan="5"><i style="color:blue">фильтр</i></td>
+        </tr>
+        <tr style="text-align:right">
+            <td>
+                <label><i>ФИО:</i></label>
+            </td>
+            <td>
+                <input name="fio" value="@Model.ActsFilterViewModel.SelectedFIO" class="form-control" />
+            </td>
+            <td>
+                <label><i>РЭС:</i></label>
+            </td>
+            <td>
+                <select name="res" asp-items="Model.ActsFilterViewModel.Reses" class="form-control"></select>
+            </td>
+            <td style="text-align:left">
+                <input type="submit" value="применить" class="и" />
+            </td>
+        </tr>
+    </table>
 </form>
 <table class="table">
     <thead>
@@ -101,6 +114,8 @@
         }
     </tbody>
 </table>
+<hr />
+<b>страница @Model.ActsPageViewModel.PageNumber из @Model.ActsPageViewModel.TotalPages</b>
 @if (Model.ActsPageViewModel.HasPreviousPage)
 {
     <a asp-action="Index"
