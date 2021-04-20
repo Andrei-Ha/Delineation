@@ -341,7 +341,7 @@ namespace Delineation.Controllers
                 using (SqlCommand cmd = con.CreateCommand())
                 {
                     con.Open();
-                    cmd.CommandText = "select dbo.tu_all.kluch,n_tu,CONVERT(VARCHAR(10),d_tu,104) s2,fio,adress_ob,naim from dbo.tu_all,dbo.sprpodr Where del=1 and n_tu is not null and d_tu is not null and  CAST(kod AS NVARCHAR)+CAST(KOD_DOP AS NVARCHAR)=kod_podr and kod_podr='542000'";
+                    cmd.CommandText = "select dbo.tu_all.kluch,n_tu,CONVERT(VARCHAR(10),d_tu,104) s2,fio,adress_ob,naim from dbo.tu_all,dbo.sprpodr Where del=3 and n_akt = 0 and n_tu is not null and d_tu is not null and  CAST(kod AS NVARCHAR)+CAST(KOD_DOP AS NVARCHAR)=kod_podr and kod_podr='542000'";
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
@@ -575,7 +575,8 @@ namespace Delineation.Controllers
                 using (SqlCommand cmd = con.CreateCommand())
                 {
                     con.Open();
-                    cmd.CommandText = "UPDATE dbo.TU_ALL SET del=1, n_akt=0, del_date=SYSDATETIME() WHERE kluch=" + d_Tc.Id.ToString();
+                    //cmd.CommandText = "UPDATE dbo.TU_ALL SET del=1, n_akt=0, del_date=SYSDATETIME() WHERE kluch=" + d_Tc.Id.ToString();
+                    cmd.CommandText = "UPDATE dbo.TU_ALL SET n_akt=0, del_date=SYSDATETIME() WHERE kluch=" + d_Tc.Id.ToString();
                     var Result = cmd.ExecuteNonQuery();
                 }
             }
@@ -926,7 +927,8 @@ namespace Delineation.Controllers
                     using (SqlCommand cmd = con.CreateCommand())
                     {
                         con.Open();
-                        cmd.CommandText = "UPDATE dbo.TU_ALL SET del=3, n_akt=" + id.ToString() + ", del_date=SYSDATETIME() WHERE kluch=" + act.TcId.ToString();
+                        //cmd.CommandText = "UPDATE dbo.TU_ALL SET del=3, n_akt=" + id.ToString() + ", del_date=SYSDATETIME() WHERE kluch=" + act.TcId.ToString();
+                        cmd.CommandText = "UPDATE dbo.TU_ALL SET n_akt=" + id.ToString() + ", del_date=SYSDATETIME() WHERE kluch=" + act.TcId.ToString();
                         var Result = cmd.ExecuteNonQuery();
                     }
                 }
