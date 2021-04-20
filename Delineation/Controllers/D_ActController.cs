@@ -332,9 +332,9 @@ namespace Delineation.Controllers
                 return View(d_Act);
         }
 
-        // GET: D_Act/Create
-        [Authorize(Roles = "D_operator")]
-        public IActionResult Create()
+        //GET: D_Act/Create
+        //[Authorize(Roles = "D_operator")]
+        public IActionResult Create(string Kluch)
         {
             List<SelList> myList = new List<SelList>();
             using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
@@ -351,11 +351,11 @@ namespace Delineation.Controllers
                     reader.Dispose();
                 }
             }
-            ViewData["TcId"] = new SelectList(myList, "Id", "Text");
+            ViewData["TcId"] = new SelectList(myList, "Id", "Text",Kluch);
             //ViewData["TcId"] = new SelectList(_context.D_Tces.OrderBy(p => p.Date).Select(p => new { Id = p.Id, text = "№" + p.Num + " от " + p.Date.ToString("dd.MM.yyyy") + "; " + p.FIO + "; " + p.Address }), "Id", "text");
             return View();
         }
-        [Authorize(Roles = "D_operator")]
+        //[Authorize(Roles = "D_operator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int TcId)
