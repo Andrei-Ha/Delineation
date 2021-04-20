@@ -331,9 +331,8 @@ namespace Delineation.Controllers
             ViewBag.listPerson = _context.D_Persons.Include(p=>p.Position).ToList();
                 return View(d_Act);
         }
-
         //GET: D_Act/Create
-        //[Authorize(Roles = "D_operator")]
+        [Authorize(Roles = "D_operator")]
         public IActionResult Create(string Kluch)
         {
             List<SelList> myList = new List<SelList>();
@@ -355,7 +354,7 @@ namespace Delineation.Controllers
             //ViewData["TcId"] = new SelectList(_context.D_Tces.OrderBy(p => p.Date).Select(p => new { Id = p.Id, text = "№" + p.Num + " от " + p.Date.ToString("dd.MM.yyyy") + "; " + p.FIO + "; " + p.Address }), "Id", "text");
             return View();
         }
-        //[Authorize(Roles = "D_operator")]
+        [Authorize(Roles = "D_operator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int TcId)
