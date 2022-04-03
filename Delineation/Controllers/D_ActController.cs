@@ -341,7 +341,8 @@ namespace Delineation.Controllers
                 using (SqlCommand cmd = con.CreateCommand())
                 {
                     con.Open();
-                    cmd.CommandText = "select dbo.tu_all.kluch,n_tu,CONVERT(VARCHAR(10),d_tu,104) s2,fio,adress_ob,naim from dbo.tu_all,dbo.sprpodr Where del=3 and n_akt = 0 and n_tu is not null and d_tu is not null and  CAST(kod AS NVARCHAR)+CAST(KOD_DOP AS NVARCHAR)=kod_podr and kod_podr='542000'";
+                    //cmd.CommandText = "select dbo.tu_all.kluch,n_tu,CONVERT(VARCHAR(10),d_tu,104) s2,fio,adress_ob,naim from dbo.tu_all,dbo.sprpodr Where del=3 and n_akt = 0 and n_tu is not null and d_tu is not null and  CAST(kod AS NVARCHAR)+CAST(KOD_DOP AS NVARCHAR)=kod_podr and kod_podr='542000'";
+                    cmd.CommandText = "select dbo.tu_all.kluch,n_tu,CONVERT(VARCHAR(10),d_tu,104) s2,fio,adress_ob,naim from dbo.tu_all,dbo.sprpodr Where n_akt = 0 and n_tu is not null and d_tu is not null and  CAST(kod AS NVARCHAR)+CAST(KOD_DOP AS NVARCHAR)=kod_podr and kod_podr='542000'";
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
