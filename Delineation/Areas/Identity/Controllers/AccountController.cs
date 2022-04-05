@@ -13,6 +13,8 @@ using Microsoft.Data.SqlClient;
 using Oracle.ManagedDataAccess.Client;
 using Microsoft.Extensions.Configuration;
 using Delineation.Models;
+using System.Security.Claims;
+using Delineation.Services;
 
 namespace CustomIdentity.Areas.Identity.Controllers
 {
@@ -23,13 +25,15 @@ namespace CustomIdentity.Areas.Identity.Controllers
         private readonly IConfiguration _configuration;
         private readonly string _oraclePirr2n;
         private readonly string _mssqlPirr2n;
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
+        private readonly EmailService _emailService;
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, EmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _oraclePirr2n = _configuration.GetConnectionString("OraclePirr2n");
             _mssqlPirr2n = _configuration.GetConnectionString("MSsqlPirr2n");
+            _emailService = emailService;
         }
         private object GetUsersList()
         {
@@ -68,8 +72,9 @@ namespace CustomIdentity.Areas.Identity.Controllers
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "D_accepter");
-                    //await _signInManager.SignInAsync(user, false);
-                    //return RedirectToAction("Index", "Home",new { Area = "" });
+                    // !!!save Linom of User into Claims with name ClaimTypes.Sid
+                    var claim = new Claim(ClaimTypes.Sid, model.Linom.ToString());
+                    await _userManager.AddClaimAsync(user, claim);
 
                     // генерация токена для пользователя
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -78,8 +83,7 @@ namespace CustomIdentity.Areas.Identity.Controllers
                         "Account",
                         new { userId = user.Id, code = code },
                         protocol: HttpContext.Request.Scheme);
-                    EmailService emailService = new EmailService();
-                    await emailService.SendEmailAsync(model.Email, "Подтверждение вашего e-mail в программе \"Акты разграничений\"",
+                    await _emailService.SendEmailAsync(model.Email, "Подтверждение вашего e-mail в программе \"Акты разграничений\"",
                         $"Подтвердите регистрацию в программе \"Акты разграничений\", перейдя по ссылке: <a href='{callbackUrl}'>Ссылка</a>. \n Если Вы не регистрировались в программе, можете удалить это сообщение!");
 
                     return Content("Для завершения регистрации проверьте электронную почту и перейдите по ссылке, указанной в письме");
@@ -162,7 +166,7 @@ namespace CustomIdentity.Areas.Identity.Controllers
             if (user == null) return View("Error");
             var result = await _userManager.ConfirmEmailAsync(user, code);
             if (result.Succeeded)
-                return RedirectToAction("Index", "Home",new { Area = "" });
+                return RedirectToAction("Index", "Home",new { Area = "", user = user.UserName });
             else
                 return View("Error");
         }
@@ -199,8 +203,7 @@ namespace CustomIdentity.Areas.Identity.Controllers
                 }
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                EmailService emailService = new EmailService();
-                await emailService.SendEmailAsync(model.Email, "Reset Password",
+                await _emailService.SendEmailAsync(model.Email, "Reset Password",
                     $"Для сброса пароля пройдите по ссылке: <a href='{callbackUrl}'>link</a>");
                 return Content("Для сброса пороля перейдите по ссылке в письме,отправленном вам на email.");
             }

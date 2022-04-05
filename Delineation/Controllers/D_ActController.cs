@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using CustomIdentity.Models;
 using Delineation.ViewModels;
+using Delineation.Services;
 
 namespace Delineation.Controllers
 {
@@ -31,8 +32,9 @@ namespace Delineation.Controllers
         private readonly string _oraclePirr2n;
         private readonly string _mssqlPirr2n;
         private readonly string _oraclePirr7sel;
+        private readonly EmailService _emailService;
 
-        public D_ActController(DelineationContext context, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
+        public D_ActController(DelineationContext context, IWebHostEnvironment webHostEnvironment, IConfiguration configuration, EmailService emailService)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
@@ -40,6 +42,7 @@ namespace Delineation.Controllers
             _oraclePirr2n = _configuration.GetConnectionString("OraclePirr2n");
             _mssqlPirr2n = _configuration.GetConnectionString("MSsqlPirr2n");
             _oraclePirr7sel = configuration.GetConnectionString("OraclePirr7sel");
+            _emailService = emailService;
         }
         //[Authorize(Roles = "D_accepter")]
         public async Task<IActionResult> Agreement(int? id)
@@ -628,7 +631,6 @@ namespace Delineation.Controllers
                 // согласовать повторно
                 _context.D_Agreements.RemoveRange(_context.D_Agreements.Where(p => p.ActId == id));
                 //
-                EmailService emailService = new EmailService();
                 List<D_Person> persons = _context.D_Persons.ToList<D_Person>();
                 //List<User> users = _context.Users.ToList<User>();
                 string UrlAgreementLink = Url.Action("Agreement", "D_Act", new { id = id }, protocol: HttpContext.Request.Scheme);
@@ -645,7 +647,7 @@ namespace Delineation.Controllers
                     {
                         text_mail = $"{user.UserName}, перейдите пожалуйста по ссылке {UrlAgreementLink} для согласования АКТа разграничения балансовой принадлежности электросетей и эксплуатационной ответственности сторон. Составитель акта {User.Identity.Name}";
                         // ! Заменить адрес asgoreglyad@brestenergo.by на user.Email
-                        await emailService.SendEmailAsync("asgoreglyad@brestenergo.by", "Важно! Согласование АКТа разграничения", text_mail);
+                        await _emailService.SendEmailAsync("asgoreglyad@brestenergo.by", "Важно! Согласование АКТа разграничения", text_mail);
                         notice = true;
                     }
 

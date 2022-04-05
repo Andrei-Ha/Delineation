@@ -13,7 +13,7 @@ using Delineation.Models;
 using Microsoft.AspNetCore.Identity;
 using CustomIdentity.Models;
 using Microsoft.AspNetCore.HttpOverrides;
-
+using Delineation.Services;
 
 namespace Delineation
 {
@@ -29,6 +29,7 @@ namespace Delineation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<EmailService>();
             //string connString = Configuration.GetConnectionString("DefaultConnection");
             //string connString = Configuration.GetConnectionString("ConnectionAndr-SQL");
             //string connString = Configuration.GetConnectionString("ConnectionPirr2n");

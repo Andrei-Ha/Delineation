@@ -58,9 +58,10 @@ namespace Delineation.Controllers
             //---
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Index()
+        public IActionResult Index([FromQuery] string user)
         {
-            return View();
+            object oUser = user;
+            return View(oUser);
         }
         public IActionResult Create()
         {
