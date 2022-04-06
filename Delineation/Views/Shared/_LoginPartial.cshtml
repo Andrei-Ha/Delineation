@@ -8,7 +8,7 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" title="Пользователь">@User.Identity.Name.SmallFIO()</a>
+            <a class="nav-link text-dark" title="Пользователь">@User.Identity.Name.SmallFIO() (@User.FindFirst("Podr")?.Value)</a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-controller="Account" asp-action="Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

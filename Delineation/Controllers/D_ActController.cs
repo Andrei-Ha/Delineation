@@ -647,7 +647,7 @@ namespace Delineation.Controllers
                     {
                         text_mail = $"{user.UserName}, перейдите пожалуйста по ссылке {UrlAgreementLink} для согласования АКТа разграничения балансовой принадлежности электросетей и эксплуатационной ответственности сторон. Составитель акта {User.Identity.Name}";
                         // ! Заменить адрес asgoreglyad@brestenergo.by на user.Email
-                        await _emailService.SendEmailAsync("asgoreglyad@brestenergo.by", "Важно! Согласование АКТа разграничения", text_mail);
+                        await _emailService.SendEmailAsync(user.Email, "Важно! Согласование АКТа разграничения", text_mail);
                         notice = true;
                     }
 
