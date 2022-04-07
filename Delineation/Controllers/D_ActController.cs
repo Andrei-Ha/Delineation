@@ -31,7 +31,6 @@ namespace Delineation.Controllers
         private readonly IConfiguration _configuration;
         private readonly string _oraclePirr2n;
         private readonly string _mssqlPirr2n;
-        private readonly string _oraclePirr7sel;
         private readonly EmailService _emailService;
 
         public D_ActController(DelineationContext context, IWebHostEnvironment webHostEnvironment, IConfiguration configuration, EmailService emailService)
@@ -41,7 +40,6 @@ namespace Delineation.Controllers
             _configuration = configuration;
             _oraclePirr2n = _configuration.GetConnectionString("OraclePirr2n");
             _mssqlPirr2n = _configuration.GetConnectionString("MSsqlPirr2n");
-            _oraclePirr7sel = configuration.GetConnectionString("OraclePirr7sel");
             _emailService = emailService;
         }
         //[Authorize(Roles = "D_accepter")]
@@ -341,18 +339,23 @@ namespace Delineation.Controllers
             List<SelList> myList = new List<SelList>();
             using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
             {
-                using (SqlCommand cmd = con.CreateCommand())
+                using SqlCommand cmd = con.CreateCommand();
+                con.Open();
+                // filter of TU list by podr
+                string filterByPodr = string.Empty;
+                string podr = User.FindFirst("Podr")?.Value;
+                if (!string.IsNullOrEmpty(podr))
                 {
-                    con.Open();
-                    //cmd.CommandText = "select dbo.tu_all.kluch,n_tu,CONVERT(VARCHAR(10),d_tu,104) s2,fio,adress_ob,naim from dbo.tu_all,dbo.sprpodr Where del=3 and n_akt = 0 and n_tu is not null and d_tu is not null and  CAST(kod AS NVARCHAR)+CAST(KOD_DOP AS NVARCHAR)=kod_podr and kod_podr='542000'";
-                    cmd.CommandText = "select dbo.tu_all.kluch,n_tu,CONVERT(VARCHAR(10),d_tu,104) s2,fio,adress_ob,naim from dbo.tu_all,dbo.sprpodr Where n_akt = 0 and n_tu is not null and d_tu is not null and  CAST(kod AS NVARCHAR)+CAST(KOD_DOP AS NVARCHAR)=kod_podr and kod_podr='542000'";
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        myList.Add(new SelList() { Id = reader["kluch"].ToString(), Text = "№" + reader["n_tu"].ToString() + " от " + reader["s2"].ToString() + "; " + reader["fio"].ToString() + "; " + reader["adress_ob"].ToString() + "; " + reader["naim"].ToString() });
-                    }
-                    reader.Dispose();
+                    filterByPodr = " and kod_podr = '" + podr +"'";
                 }
+                //cmd.CommandText = "select dbo.tu_all.kluch,n_tu,CONVERT(VARCHAR(10),d_tu,104) s2,fio,adress_ob,naim from dbo.tu_all,dbo.sprpodr Where del=3 and n_akt = 0 and n_tu is not null and d_tu is not null and  CAST(kod AS NVARCHAR)+CAST(KOD_DOP AS NVARCHAR)=kod_podr and kod_podr='542000'";
+                cmd.CommandText = "select dbo.tu_all.kluch,n_tu,CONVERT(VARCHAR(10),d_tu,104) s2,fio,adress_ob,naim from dbo.tu_all,dbo.sprpodr Where n_akt = 0 and n_tu is not null and d_tu is not null and  CAST(kod AS NVARCHAR)+CAST(KOD_DOP AS NVARCHAR)=kod_podr" + filterByPodr;
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    myList.Add(new SelList() { Id = reader["kluch"].ToString(), Text = "№" + reader["n_tu"].ToString() + " от " + reader["s2"].ToString() + "; " + reader["fio"].ToString() + "; " + reader["adress_ob"].ToString() + "; " + reader["naim"].ToString() });
+                }
+                reader.Dispose();
             }
             ViewData["TcId"] = new SelectList(myList, "Id", "Text",Kluch);
             //ViewData["TcId"] = new SelectList(_context.D_Tces.OrderBy(p => p.Date).Select(p => new { Id = p.Id, text = "№" + p.Num + " от " + p.Date.ToString("dd.MM.yyyy") + "; " + p.FIO + "; " + p.Address }), "Id", "text");
@@ -404,73 +407,69 @@ namespace Delineation.Controllers
             {
                 string path_vsd = _webHostEnvironment.WebRootPath + "\\Output\\vsd\\" + str_numTP + ".vsd";
                 string path_vsd038 = _webHostEnvironment.WebRootPath + "\\Output\\vsd038\\l" + str_numTP + ".vsd";
-                using (OracleConnection con = new OracleConnection(_oraclePirr7sel))
+                using OracleConnection con = new OracleConnection(_configuration.GetConnectionString("Oracle" + tc.ResId));
+                string doc_code = "";
+                using OracleCommand cmd = con.CreateCommand();
+                con.Open();
+                cmd.CommandText = "select TP_NUM, doc_code, type_txt from TP,TP_SYS_TYPES where substation_type_id=id and substr(doc_code,TO_NUMBER(INSTR(doc_code,'-',1,2))+1)=" + str_numTP;
+                OracleDataReader MyReader = cmd.ExecuteReader();
+                using (MyReader)
                 {
-                    string doc_code = "";
-                    using (OracleCommand cmd = con.CreateCommand())
+                    while (MyReader.Read())
                     {
-                        con.Open();
-                        cmd.CommandText = "select TP_NUM, doc_code, type_txt from TP,TP_SYS_TYPES where substation_type_id=id and substr(doc_code,TO_NUMBER(INSTR(doc_code,'-',1,2))+1)=" + str_numTP;
-                        OracleDataReader MyReader = cmd.ExecuteReader();
-                        using (MyReader)
+                        //tc.TP += ":" + MyReader["type_txt"].ToString().Replace("ЗТП","ТП")+ "-" +str_numTP + " (" + MyReader["TP_NUM"].ToString() +")";
+                        doc_code = MyReader["doc_code"].ToString();
+                    }
+                }
+                cmd.CommandText = "select INV_NUMB from TP_INV_NUMB where doc_code='" + doc_code + "'";
+                MyReader = cmd.ExecuteReader();
+                using (MyReader)
+                {
+                    while (MyReader.Read())
+                    {
+                        tc.TPInvNum = Convert.ToInt32(MyReader["inv_numb"]);
+                    }
+                }
+                cmd.CommandText = "select line_doc_code, substation_id, vl10.substation_id as psid, p_name, p_voltage from TP_VL_10, vl10, psubstations where p_code=substation_id and vl10.doc_code=line_doc_code and substr(TP_VL_10.doc_code,TO_NUMBER(INSTR(TP_VL_10.doc_code,'-',1,2))+1)=" + str_numTP;
+                MyReader = cmd.ExecuteReader();
+                using (MyReader)
+                {
+                    while (MyReader.Read())
+                    {
+                        str += "ВЛ 10кВ №" + MyReader["line_doc_code"].ToString().Split('-')[2] + ";" + "ПС " + MyReader["p_name"].ToString() + "-" + MyReader["p_voltage"].ToString() + "/";
+                    }
+                }
+                FileInfo file_vsd = new FileInfo(path_vsd);
+                if (!file_vsd.Exists)
+                //if(true)
+                {
+                    cmd.CommandText = "select PFILE, DOC_CODE from TP_SHEM WHERE DOC_CODE='" + doc_code + "'";
+                    OracleDataReader MyReaderB = cmd.ExecuteReader();
+                    using (MyReaderB)
+                    {
+                        while (MyReaderB.Read())
                         {
-                            while (MyReader.Read())
+                            OracleBinary oracleBinary = MyReaderB.GetOracleBinary(0);
+                            using (FileStream fstream = new FileStream(path_vsd, FileMode.OpenOrCreate))
                             {
-                                //tc.TP += ":" + MyReader["type_txt"].ToString().Replace("ЗТП","ТП")+ "-" +str_numTP + " (" + MyReader["TP_NUM"].ToString() +")";
-                                doc_code = MyReader["doc_code"].ToString();
+                                byte[] array = (byte[])oracleBinary;
+                                fstream.Write(array, 0, array.Length);
                             }
                         }
-                        cmd.CommandText = "select INV_NUMB from TP_INV_NUMB where doc_code='" + doc_code + "'";
-                        MyReader = cmd.ExecuteReader();
-                        using (MyReader)
+                    }
+                    string doc_code_vl0038 = doc_code.Split('-')[0] + "-CL038-" + doc_code.Split('-')[2];
+                    //не будет работать если номер отходящей линии двузначный
+                    cmd.CommandText = "select PFILE, DOC_CODE from CL038_VISIO WHERE SUBSTR(DOC_CODE,0,LENGTH(doc_code)-2)='" + doc_code_vl0038 + "'";
+                    MyReaderB = cmd.ExecuteReader();
+                    using (MyReaderB)
+                    {
+                        while (MyReaderB.Read())
                         {
-                            while (MyReader.Read())
+                            OracleBinary oracleBinary = MyReaderB.GetOracleBinary(0);
+                            using (FileStream fstream = new FileStream(path_vsd038, FileMode.OpenOrCreate))
                             {
-                                tc.TPInvNum = Convert.ToInt32(MyReader["inv_numb"]);
-                            }
-                        }
-                        cmd.CommandText = "select line_doc_code, substation_id, vl10.substation_id as psid, p_name, p_voltage from TP_VL_10, vl10, psubstations where p_code=substation_id and vl10.doc_code=line_doc_code and substr(TP_VL_10.doc_code,TO_NUMBER(INSTR(TP_VL_10.doc_code,'-',1,2))+1)=" + str_numTP;
-                        MyReader = cmd.ExecuteReader();
-                        using (MyReader)
-                        {
-                            while (MyReader.Read())
-                            {
-                                str += "ВЛ 10кВ №" + MyReader["line_doc_code"].ToString().Split('-')[2] + ";" + "ПС " + MyReader["p_name"].ToString() + "-" + MyReader["p_voltage"].ToString() + "/";
-                            }
-                        }
-                        FileInfo file_vsd = new FileInfo(path_vsd);
-                        if (!file_vsd.Exists)
-                        //if(true)
-                        {
-                            cmd.CommandText = "select PFILE, DOC_CODE from TP_SHEM WHERE DOC_CODE='" + doc_code + "'";
-                            OracleDataReader MyReaderB = cmd.ExecuteReader();
-                            using (MyReaderB)
-                            {
-                                while (MyReaderB.Read())
-                                {
-                                    OracleBinary oracleBinary = MyReaderB.GetOracleBinary(0);
-                                    using (FileStream fstream = new FileStream(path_vsd, FileMode.OpenOrCreate))
-                                    {
-                                        byte[] array = (byte[])oracleBinary;
-                                        fstream.Write(array, 0, array.Length);
-                                    }
-                                }
-                            }
-                            string doc_code_vl0038 = doc_code.Split('-')[0] + "-CL038-" + doc_code.Split('-')[2];
-                            //не будет работать если номер отходящей линии двузначный
-                            cmd.CommandText = "select PFILE, DOC_CODE from CL038_VISIO WHERE SUBSTR(DOC_CODE,0,LENGTH(doc_code)-2)='"+doc_code_vl0038+"'";
-                            MyReaderB = cmd.ExecuteReader();
-                            using (MyReaderB)
-                            {
-                                while (MyReaderB.Read())
-                                {
-                                    OracleBinary oracleBinary = MyReaderB.GetOracleBinary(0);
-                                    using (FileStream fstream = new FileStream(path_vsd038, FileMode.OpenOrCreate))
-                                    {
-                                        byte[] array = (byte[])oracleBinary;
-                                        fstream.Write(array, 0, array.Length);
-                                    }
-                                }
+                                byte[] array = (byte[])oracleBinary;
+                                fstream.Write(array, 0, array.Length);
                             }
                         }
                     }
