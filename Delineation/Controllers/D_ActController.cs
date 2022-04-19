@@ -329,7 +329,7 @@ namespace Delineation.Controllers
             {
                 return NotFound();
             }
-            ViewBag.listPerson = _context.D_Persons.Include(p=>p.Position).ToList();
+            ViewBag.listPerson = _context.D_Persons.Include(p=>p.Position).Where(p => p.Kod_long == User.FindFirst("Podr").Value).ToList();
                 return View(d_Act);
         }
         //GET: D_Act/Create
@@ -575,13 +575,11 @@ namespace Delineation.Controllers
             // удаление отметки о выдаче акта на основании выданного ТУ в dbo.TU_ALL
             using (SqlConnection con = new SqlConnection(_mssqlPirr2n))
             {
-                using (SqlCommand cmd = con.CreateCommand())
-                {
-                    con.Open();
-                    //cmd.CommandText = "UPDATE dbo.TU_ALL SET del=1, n_akt=0, del_date=SYSDATETIME() WHERE kluch=" + d_Tc.Id.ToString();
-                    cmd.CommandText = "UPDATE dbo.TU_ALL SET n_akt=0, del_date=SYSDATETIME() WHERE kluch=" + d_Tc.Id.ToString();
-                    var Result = cmd.ExecuteNonQuery();
-                }
+                using SqlCommand cmd = con.CreateCommand();
+                con.Open();
+                //cmd.CommandText = "UPDATE dbo.TU_ALL SET del=1, n_akt=0, del_date=SYSDATETIME() WHERE kluch=" + d_Tc.Id.ToString();
+                cmd.CommandText = "UPDATE dbo.TU_ALL SET n_akt=0, del_date=SYSDATETIME() WHERE kluch=" + d_Tc.Id.ToString();
+                var Result = cmd.ExecuteNonQuery();
             }
             _context.D_Acts.Remove(d_Act);
             _context.D_Tces.Remove(d_Tc);

@@ -61,12 +61,12 @@ namespace Delineation.Controllers
                 using (OracleCommand cmd = con.CreateCommand())
                 {
                     con.Open();
-                    cmd.CommandText = "select fio, name1, name2, (cex + cex1) as kod, linom from delo_s_fio order by fio,name1,name2";
+                    cmd.CommandText = "select fio, name1, name2, (cex || cex1) as kod, linom from delo_s_fio order by fio,name1,name2";
                     OracleDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
 
-                        myList.Add(new SelList() { Id = reader["fio"].ToString() + ";" + reader["name1"].ToString() + ";" + reader["name2"].ToString() + ";" + reader["kod"].ToString() + ";" + reader["linom"].ToString(), Text = reader["fio"].ToString() + " " + reader["name1"].ToString() + " " + reader["name2"].ToString() });
+                        myList.Add(new SelList() { Id = reader["fio"].ToString() + ";" + reader["name1"].ToString() + ";" + reader["name2"].ToString() + ";" + reader["kod"].ToString() + ";" + reader["linom"].ToString(), Text = reader["fio"].ToString() + " " + reader["name1"].ToString() + " " + reader["name2"].ToString() + " " + reader["kod"].ToString() });
                     }
                     reader.Dispose();
                 }
@@ -180,7 +180,12 @@ namespace Delineation.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var d_Person = await _context.D_Persons.FindAsync(id);
-            _context.D_Persons.Remove(d_Person);
+            var reses = await _context.D_Reses.Where(r => r.NachId == id || r.ZamNachId == id || r.GlInzhId == id || r.BuhId == id).ToListAsync();
+            
+            if (d_Person != null)
+            {
+                _context.D_Persons.Remove(d_Person);
+            }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
